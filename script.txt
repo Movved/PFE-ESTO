@@ -1,0 +1,180 @@
+DROP DATABASE if exists pfe_app;
+CREATE DATABASE pfe_app;
+use pfe_app;
+
+CREATE TABLE Utilisateur (
+    id_user INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(40) NOT NULL,
+    prenom VARCHAR(40) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    role ENUM('ADMIN','ENSEIGNANT','ETUDIANT') NOT NULL,
+    actif BOOLEAN NOT NULL DEFAULT TRUE,
+    date_creation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Enseignant (
+    id_user INT PRIMARY KEY,
+    specialite VARCHAR(100) NOT NULL,
+    departement VARCHAR(100) NOT NULL,
+    is_chef BOOLEAN DEFAULT FALSE,
+
+    FOREIGN KEY (id_user)
+        REFERENCES Utilisateur(id_user)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Filiere (
+    id_filiere INT AUTO_INCREMENT PRIMARY KEY,
+    nom_filiere VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    responsable_id INT NOT NULL,
+
+    FOREIGN KEY (responsable_id)
+        REFERENCES Enseignant(id_user)
+        ON DELETE RESTRICT
+);
+
+CREATE TABLE Annee_Academique (
+    id_annee INT AUTO_INCREMENT PRIMARY KEY,
+    libelle VARCHAR(20) NOT NULL,
+    id_filiere INT NOT NULL,
+
+    FOREIGN KEY (id_filiere)
+        REFERENCES Filiere(id_filiere)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Semestre (
+    id_semestre INT AUTO_INCREMENT PRIMARY KEY,
+    numero INT NOT NULL CHECK (numero IN (1,2)),
+    cloture BOOLEAN DEFAULT FALSE,
+    id_annee INT NOT NULL,
+
+    FOREIGN KEY (id_annee)
+        REFERENCES Annee_Academique(id_annee)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Module (
+    id_module INT AUTO_INCREMENT PRIMARY KEY,
+    code_module VARCHAR(20) UNIQUE NOT NULL,
+    nom_module VARCHAR(100) NOT NULL,
+    id_semestre INT NOT NULL,
+
+    FOREIGN KEY (id_semestre)
+        REFERENCES Semestre(id_semestre)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Enseignement (
+    id_enseignement INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
+    id_module INT NOT NULL,
+
+    UNIQUE(id_user, id_module),
+
+    FOREIGN KEY (id_user)
+        REFERENCES Enseignant(id_user)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_module)
+        REFERENCES Module(id_module)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Etudiant (
+    id_user INT PRIMARY KEY,
+    cne VARCHAR(20) UNIQUE NOT NULL,
+    id_filiere INT NOT NULL,
+    annee_actuelle INT NOT NULL,
+
+    FOREIGN KEY (id_user)
+        REFERENCES Utilisateur(id_user)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_filiere)
+        REFERENCES Filiere(id_filiere)
+        ON DELETE RESTRICT
+);
+
+CREATE TABLE Inscription (
+    id_inscription INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
+    id_semestre INT NOT NULL,
+    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(id_user, id_semestre),
+
+    FOREIGN KEY (id_user)
+        REFERENCES Etudiant(id_user)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_semestre)
+        REFERENCES Semestre(id_semestre)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Evaluation (
+    id_evaluation INT AUTO_INCREMENT PRIMARY KEY,
+    libelle VARCHAR(100) NOT NULL,
+    type ENUM('CC','TP','EXAM') NOT NULL,
+    date_evaluation DATE NOT NULL,
+    id_module INT NOT NULL,
+
+    FOREIGN KEY (id_module)
+        REFERENCES Module(id_module)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Note (
+    id_note INT AUTO_INCREMENT PRIMARY KEY,
+    note DECIMAL(5,2),
+    rattrapage DECIMAL(5,2),
+    note_finale DECIMAL(5,2),
+
+    id_user INT NOT NULL,
+    id_evaluation INT NOT NULL,
+
+    UNIQUE(id_user, id_evaluation),
+
+    FOREIGN KEY (id_user)
+        REFERENCES Etudiant(id_user)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_evaluation)
+        REFERENCES Evaluation(id_evaluation)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Reclamation (
+    id_reclamation INT AUTO_INCREMENT PRIMARY KEY,
+    message TEXT NOT NULL,
+    date_reclamation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    statut ENUM('EN_ATTENTE','TRAITEE','REJETEE') DEFAULT 'EN_ATTENTE',
+
+    id_note INT NOT NULL,
+    id_user INT NOT NULL,
+
+    FOREIGN KEY (id_note)
+        REFERENCES Note(id_note)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_user)
+        REFERENCES Etudiant(id_user)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Log_Action (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    action VARCHAR(100) NOT NULL,
+    table_concernee VARCHAR(50) NOT NULL,
+    id_enregistrement INT,
+    date_action DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    id_user INT,
+
+    FOREIGN KEY (id_user)
+        REFERENCES Utilisateur(id_user)
+        ON DELETE SET NULL
+);
