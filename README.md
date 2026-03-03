@@ -101,7 +101,7 @@ Don't Run migrations yet:
 php artisan migrate
 ```
 
-Instead in your xampp run the commands in 
+Instead, in your xampp run the mysql commands located in : `/script.txt`
 ## Database Seeding
 
 We used seeders to fill the tables.
