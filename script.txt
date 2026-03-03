@@ -1,4 +1,4 @@
-DROP DATABASE if exists pfe_app;
+DROP DATABASE pfe_app;
 CREATE DATABASE pfe_app;
 use pfe_app;
 
@@ -6,7 +6,7 @@ CREATE TABLE Utilisateur (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(40) NOT NULL,
     prenom VARCHAR(40) NOT NULL,
-    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(50) UNIQUE NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
     role ENUM('ADMIN','ENSEIGNANT','ETUDIANT') NOT NULL,
     actif BOOLEAN NOT NULL DEFAULT TRUE,
