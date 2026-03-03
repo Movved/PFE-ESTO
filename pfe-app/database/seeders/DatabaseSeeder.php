@@ -30,16 +30,16 @@ class DatabaseSeeder extends Seeder
         // ─── 1. UTILISATEURS ──────────────────────────────────────────────
         DB::table('utilisateur')->insert([
             // Admin
-            ['nom' => 'Alaoui',    'prenom' => 'Karim',   'email' => 'admin@ump.ac.ma',        'mot_de_passe' => Hash::make('password'), 'role' => 'ADMIN',      'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Alaoui',    'prenom' => 'Karim',   'email' => 'A.karim@ump.ac.ma',        'mot_de_passe' => Hash::make('password'), 'role' => 'ADMIN',      'actif' => true,  'date_creation' => now()],
             // Enseignants
-            ['nom' => 'Benali',    'prenom' => 'Youssef', 'email' => 'ybenali@ump.ac.ma',      'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Cherkaoui', 'prenom' => 'Fatima',  'email' => 'fcherkaoui@ump.ac.ma',   'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Idrissi',   'prenom' => 'Omar',    'email' => 'oidrissi@ump.ac.ma',     'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Benali',    'prenom' => 'Youssef', 'email' => 'y.benali@ump.ac.ma',      'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Cherkaoui', 'prenom' => 'Fatima',  'email' => 'f.cherkaoui@ump.ac.ma',   'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Idrissi',   'prenom' => 'Omar',    'email' => 'o.idrissi@ump.ac.ma',     'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
             // Etudiants
-            ['nom' => 'Moussaoui', 'prenom' => 'Amine',   'email' => 'amoussaoui@ump.ac.ma',   'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Tazi',      'prenom' => 'Sara',    'email' => 'stazi@ump.ac.ma',        'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Hajji',     'prenom' => 'Mehdi',   'email' => 'mhajji@ump.ac.ma',       'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Lamrani',   'prenom' => 'Nadia',   'email' => 'nlamrani@ump.ac.ma',     'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => false, 'date_creation' => now()],
+            ['nom' => 'Bellatrach', 'prenom' => 'Mohammed',   'email' => 'bellatrach.mohammed.24@ump.ac.ma',   'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Elmir',      'prenom' => 'Rayane',    'email' => 'elmir.rayane.24@ump.ac.ma',        'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Chehlafi',     'prenom' => 'Ibrahim',   'email' => 'chehlafi.ibrahim.24@ump.ac.ma',       'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Lamrani',   'prenom' => 'Nadia',   'email' => 'lamrani.nadia.23@ump.ac.ma',     'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => false, 'date_creation' => now()],
         ]);
 
         // ─── 2. ENSEIGNANTS ───────────────────────────────────────────────
@@ -52,15 +52,15 @@ class DatabaseSeeder extends Seeder
 
         // ─── 3. FILIERES ──────────────────────────────────────────────────
         DB::table('filiere')->insert([
-            ['nom_filiere' => 'Génie Logiciel',         'description' => 'Formation en développement logiciel et architecture.', 'responsable_id' => 2],
-            ['nom_filiere' => 'Réseaux et Télécoms',    'description' => 'Formation en réseaux, sécurité et télécommunications.', 'responsable_id' => 4],
+            ['nom_filiere' => 'Conception et Developppement des Logiciel',         'description' => 'Formation en développement logiciel et architecture.', 'responsable_id' => 2],
+            ['nom_filiere' => 'Réseaux Sécurité et Télécoms',    'description' => 'Formation en réseaux, sécurité et télécommunications.', 'responsable_id' => 4],
         ]);
 
         // ─── 4. ANNEES ACADEMIQUES ────────────────────────────────────────
         DB::table('annee_academique')->insert([
             ['libelle' => '2023-2024', 'id_filiere' => 1],
             ['libelle' => '2024-2025', 'id_filiere' => 1],
-            ['libelle' => '2024-2025', 'id_filiere' => 2],  // same label, different filière
+            ['libelle' => '2024-2025', 'id_filiere' => 2],  // meme libelle, filière different
         ]);
 
         // ─── 5. SEMESTRES ─────────────────────────────────────────────────
@@ -77,10 +77,10 @@ class DatabaseSeeder extends Seeder
             ['code_module' => 'INF101', 'nom_module' => 'Algorithmique',           'id_semestre' => 1],
             ['code_module' => 'MAT101', 'nom_module' => 'Analyse Mathématique',    'id_semestre' => 1],
             // Semestre 2 - GL 2023-24
-            ['code_module' => 'INF201', 'nom_module' => 'Programmation Orientée Objet', 'id_semestre' => 2],
-            ['code_module' => 'INF202', 'nom_module' => 'Base de Données',         'id_semestre' => 2],
+            ['code_module' => 'INF201', 'nom_module' => 'OOP C++', 'id_semestre' => 2],
+            ['code_module' => 'INF202', 'nom_module' => 'Base de Données Mysql',         'id_semestre' => 2],
             // Semestre 1 - GL 2024-25
-            ['code_module' => 'INF301', 'nom_module' => 'Développement Web',       'id_semestre' => 3],
+            ['code_module' => 'INF301', 'nom_module' => 'Développement Web 1',       'id_semestre' => 3],
             // Semestre 1 - RT 2024-25
             ['code_module' => 'RES101', 'nom_module' => 'Réseaux Informatiques',   'id_semestre' => 4],
         ]);
