@@ -30,16 +30,16 @@ class DatabaseSeeder extends Seeder
         // ─── 1. UTILISATEURS ──────────────────────────────────────────────
         DB::table('utilisateur')->insert([
             // Admin
-            ['nom' => 'Alaoui',    'prenom' => 'Karim',   'username' => 'admin',        'mot_de_passe' => Hash::make('password'), 'role' => 'ADMIN',      'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Alaoui',    'prenom' => 'Karim',   'email' => 'admin@ump.ac.ma',        'mot_de_passe' => Hash::make('password'), 'role' => 'ADMIN',      'actif' => true,  'date_creation' => now()],
             // Enseignants
-            ['nom' => 'Benali',    'prenom' => 'Youssef', 'username' => 'ybenali',      'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Cherkaoui', 'prenom' => 'Fatima',  'username' => 'fcherkaoui',   'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Idrissi',   'prenom' => 'Omar',    'username' => 'oidrissi',     'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Benali',    'prenom' => 'Youssef', 'email' => 'ybenali@ump.ac.ma',      'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Cherkaoui', 'prenom' => 'Fatima',  'email' => 'fcherkaoui@ump.ac.ma',   'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Idrissi',   'prenom' => 'Omar',    'email' => 'oidrissi@ump.ac.ma',     'mot_de_passe' => Hash::make('password'), 'role' => 'ENSEIGNANT', 'actif' => true,  'date_creation' => now()],
             // Etudiants
-            ['nom' => 'Moussaoui', 'prenom' => 'Amine',   'username' => 'amoussaoui',   'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Tazi',      'prenom' => 'Sara',    'username' => 'stazi',        'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Hajji',     'prenom' => 'Mehdi',   'username' => 'mhajji',       'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
-            ['nom' => 'Lamrani',   'prenom' => 'Nadia',   'username' => 'nlamrani',     'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => false, 'date_creation' => now()],
+            ['nom' => 'Moussaoui', 'prenom' => 'Amine',   'email' => 'amoussaoui@ump.ac.ma',   'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Tazi',      'prenom' => 'Sara',    'email' => 'stazi@ump.ac.ma',        'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Hajji',     'prenom' => 'Mehdi',   'email' => 'mhajji@ump.ac.ma',       'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => true,  'date_creation' => now()],
+            ['nom' => 'Lamrani',   'prenom' => 'Nadia',   'email' => 'nlamrani@ump.ac.ma',     'mot_de_passe' => Hash::make('password'), 'role' => 'ETUDIANT',   'actif' => false, 'date_creation' => now()],
         ]);
 
         // ─── 2. ENSEIGNANTS ───────────────────────────────────────────────

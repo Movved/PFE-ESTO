@@ -36,14 +36,7 @@ composer install
 npm install
 ```
 
-## Run the Development Environment
-You can start Laravel's local development server, queue worker, and Vite development server using the `dev` Composer script:
 
-```bash
-cd pfe-app
-npm install && npm run build
-composer run dev
-```
 ### 3️⃣ Navigate to the Laravel app
 
 ```bash

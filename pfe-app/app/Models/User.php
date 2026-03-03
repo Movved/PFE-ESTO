@@ -16,7 +16,7 @@ class User extends Authenticatable
     public $timestamps = false; // Using date_creation instead
 
     protected $fillable = [
-        'nom', 'prenom', 'email', 'mot_de_passe', 'role', 'actif'
+        'nom', 'prenom', 'username', 'mot_de_passe', 'role', 'actif'
     ];
 
     protected $hidden = ['mot_de_passe'];
