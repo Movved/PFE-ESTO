@@ -12,7 +12,7 @@ class User extends Authenticatable
     protected $table      = 'Utilisateur';
     protected $primaryKey = 'id_user';
 
-    public $rememberTokenName = false; // ← disables remember_token
+    public $rememberTokenName = false; 
 
     protected $fillable = [
         'nom',
