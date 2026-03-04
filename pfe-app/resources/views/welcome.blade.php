@@ -20,15 +20,20 @@
                     <h1 class="text-3xl font-bold text-red-600">PFE <span class="text-gray-800">ESTO</span></h1>
                 </div>
                 
-                <nav class="-mx-3 flex flex-1 justify-end">
+                <nav class="-mx-3 flex flex-1 justify-end gap-2">
                     @auth
                         <a href="{{ url('/dashboard') }}" class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]">
                             Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="rounded-md px-4 py-2 bg-red-600 text-white font-semibold shadow-sm hover:bg-red-500 transition focus:outline-none">
+                        <a href="{{ route('login') }}" class="rounded-md px-4 py-2 border border-red-600 text-red-600 font-semibold shadow-sm hover:bg-red-50 transition focus:outline-none">
                             Connexion
                         </a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="rounded-md px-4 py-2 bg-red-600 text-white font-semibold shadow-sm hover:bg-red-500 transition focus:outline-none">
+                                S'inscrire
+                            </a>
+                        @endif
                     @endauth
                 </nav>
             </header>
