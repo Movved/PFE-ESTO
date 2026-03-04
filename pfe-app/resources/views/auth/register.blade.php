@@ -14,17 +14,22 @@
             <x-text-input id="prenom" class="block mt-1 w-full" type="text" name="prenom" :value="old('prenom')" required autofocus autocomplete="prenom" />
             <x-input-error :messages="$errors->get('prenom')" class="mt-2" />
         </div>
-        <!-- Username -->
-        <div>
-            <x-input-label for="username" :value="__('Username')" />
-            <x-text-input id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('username')" class="mt-2" />
-        </div>
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+        <!-- Role -->
+        <div class="mt-4">
+            <x-input-label for="role" :value="__('Rôle')" />
+            <select id="role" name="role" required
+                class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                <option value="" disabled selected>-- Choisir un rôle --</option>
+                <option value="ETUDIANT"   {{ old('role') == 'ETUDIANT'   ? 'selected' : '' }}>Étudiant</option>
+                <option value="ENSEIGNANT" {{ old('role') == 'ENSEIGNANT' ? 'selected' : '' }}>Enseignant</option>
+            </select>
+            <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
         <!-- Password -->
