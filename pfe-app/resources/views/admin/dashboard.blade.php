@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-bold mb-4">Gestion du Système</h3>
-                    <p>Bienvenue, {{ Auth::user()->nom }}. Vous avez un accès complet pour gérer les utilisateurs, les filières et les années académiques.</p>
+                    <p>Bienvenue, {{ Auth::user()->nom }}. Vous avez un accès complet pour gérer les utilisateurs, les filières et les années académiques.vous etes un admin</p>
                 </div>
             </div>
         </div>

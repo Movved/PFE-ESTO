@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Enseignant\DashboardController as EnseignantDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,9 +19,13 @@ Route::middleware('auth')->group(function () {
         return view('admin.dashboard'); // Points to resources/views/admin/dashboard.blade.php
     })->name('admin.dashboard');
 
-    Route::get('/enseignant/dashboard', function () {
-        return view('enseignant.dashboard'); 
-    })->name('enseignant.dashboard');
+    // Teacher Routes
+    Route::get('/enseignant/dashboard', [EnseignantDashboardController::class, 'index'])->name('enseignant.dashboard');
+    Route::get('/enseignant/filieres', [EnseignantDashboardController::class, 'filieres'])->name('enseignant.filieres');
+    Route::get('/enseignant/filiere/{id}', [EnseignantDashboardController::class, 'showFiliere'])->name('enseignant.filiere.show');
+    Route::get('/enseignant/filiere/{filiere_id}/student/{student_id}', [EnseignantDashboardController::class, 'showStudent'])->name('enseignant.student.show');
+    Route::post('/enseignant/student/update-grade', [EnseignantDashboardController::class, 'updateGrade'])->name('enseignant.student.update-grade');
+    Route::post('/enseignant/student/update-grades', [EnseignantDashboardController::class, 'updateGrades'])->name('enseignant.student.update-grades');
 
     Route::get('/etudiant/dashboard', function () {
         return view('etudiant.dashboard');
