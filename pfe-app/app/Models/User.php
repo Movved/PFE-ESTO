@@ -13,6 +13,7 @@ class User extends Authenticatable
     protected $primaryKey = 'id_user';
 
     public $rememberTokenName = false; 
+    public    $timestamps = false;
 
     protected $fillable = [
         'nom',
