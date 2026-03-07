@@ -11,6 +11,7 @@ class User extends Authenticatable
 {
     protected $table      = 'Utilisateur';
     protected $primaryKey = 'id_user';
+        
 
     public $rememberTokenName = false; 
     public    $timestamps = false;

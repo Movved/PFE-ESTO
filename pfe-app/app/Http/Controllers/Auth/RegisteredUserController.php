@@ -28,19 +28,35 @@ class RegisteredUserController extends Controller
         $request->validate([
             'nom'      => ['required', 'string', 'max:255'],
             'prenom'   => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:Utilisateur,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'     => ['required', 'in:ETUDIANT,ENSEIGNANT'], 
+            'role'     => ['required', 'in:ETUDIANT,ENSEIGNANT'],
         ]);
-        
-        User::create([
+    
+        $user = User::create([
             'nom'          => $request->nom,
             'prenom'       => $request->prenom,
             'email'        => $request->email,
             'mot_de_passe' => Hash::make($request->password),
-            'role'         => $request->role, 
+            'role'         => $request->role,
             'actif'        => 1,
         ]);
+    
+        if ($request->role === 'ETUDIANT') {
+            \DB::table('ETUDIANT')->insert([
+                'cne'     => 'ETU-' . $user->id_user,
+                'id_user' => $user->id_user,
+            ]);
+        }
+    
+        if ($request->role === 'ENSEIGNANT') {
+            \DB::table('ENSEIGNANT')->insert([
+                'specialite'     => 'Non définie',
+                'is_chef'        => 0,
+                'id_departement' => 1,
+                'id_user'        => $user->id_user,
+            ]);
+        }
     
         return redirect()->route('login')->with('status', 'Compte créé avec succès ! Connectez-vous.');
     }
