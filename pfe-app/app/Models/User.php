@@ -11,7 +11,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'Utilisateur';
+    protected $table = 'utilisateur';
     protected $primaryKey = 'id_user';
     public $timestamps = false; // Using date_creation instead
 
@@ -25,5 +25,9 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->mot_de_passe;
+    }
+    public function getAuthPasswordName()
+    {
+        return 'mot_de_passe';
     }
 }
