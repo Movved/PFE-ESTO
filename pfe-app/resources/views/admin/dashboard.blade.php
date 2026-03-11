@@ -401,8 +401,8 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="{{ route('etudiant.dashboard') }}"
-                class="nav-item {{ request()->routeIs('etudiant.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}"
+                class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24">
                     <rect x="3" y="3" width="7" height="7" />
                     <rect x="14" y="3" width="7" height="7" />
@@ -411,16 +411,16 @@
                 </svg>
                 Dashboard
             </a>
-            <a href="{{ route('etudiant.notes') }}"
-                class="nav-item {{ request()->routeIs('etudiant.notes') ? 'active' : '' }}">
+            <a href="{{ route('admin.notes') }}"
+                class="nav-item {{ request()->routeIs('admin.notes') ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24">
                     <path d="M9 11l3 3L22 4" />
                     <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
                 </svg>
                 Mes Notes
             </a>
-            <a href="{{ route('etudiant.cours') }}"
-                class="nav-item {{ request()->routeIs('etudiant.cours') ? 'active' : '' }}">
+            <a href="{{ route('admin.cours') }}"
+                class="nav-item {{ request()->routeIs('admin.cours') ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24">
                     <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
@@ -508,12 +508,12 @@
                     <div class="welcome-text-title">Bonjour, {{ Auth::user()->prenom }} </div>
                     <div class="welcome-text-sub">
                         Voici un aperçu de votre situation académique.
-                        @if($etudiant)
+                        
                             <span class="cne-tag"
                                 style="margin-left:10px; background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.8);">
-                                {{ $etudiant->cne }}
+                                
                             </span>
-                        @endif
+                        
                     </div>
                 </div>
                 <div class="welcome-banner-icon">
@@ -534,7 +534,7 @@
                                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
                             </svg></span>
                     </div>
-                    <div class="stat-value">{{ $totalModules }}</div>
+                    
                     <div class="stat-sub">ce semestre</div>
                 </div>
 
@@ -545,13 +545,7 @@
                                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                             </svg></span>
                     </div>
-                    <div class="stat-value {{ $moyenne >= 12 ? 'grade-pass' : ($moyenne >= 10 ? 'grade-warn' : 'grade-fail') }}"
-                        style="font-family:'SF Mono','Fira Code',monospace;">
-                        {{ number_format($moyenne, 2) }}
-                    </div>
-                    <div class="stat-sub {{ $moyenne >= 12 ? 'up' : ($moyenne >= 10 ? 'warn' : 'down') }}">
-                        {{ $moyenne >= 12 ? '✓ Validé' : ($moyenne >= 10 ? '⚠ Limite' : '✗ Insuffisant') }}
-                    </div>
+                    
                 </div>
 
                 <div class="stat-card">
@@ -562,11 +556,7 @@
                                 <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
                             </svg></span>
                     </div>
-                    <div class="stat-value">{{ $notesCount }} <span
-                            style="font-size:16px;color:var(--text-secondary);">/ {{ $totalModules }}</span></div>
-                    <div class="stat-sub">
-                        {{ $totalModules > 0 ? round(($notesCount / max($totalModules, 1)) * 100) : 0 }}% complété
-                    </div>
+                    
                 </div>
 
                 <div class="stat-card">
@@ -578,10 +568,7 @@
                                 <line x1="12" y1="16" x2="12.01" y2="16" />
                             </svg></span>
                     </div>
-                    <div class="stat-value">{{ $reclamationsCount }}</div>
-                    <div class="stat-sub {{ $pendingCount > 0 ? 'warn' : '' }}">
-                        {{ $pendingCount > 0 ? $pendingCount . ' en attente' : 'Aucune en attente' }}
-                    </div>
+                    
                 </div>
             </div>
 
@@ -597,24 +584,24 @@
                         </div>
                         <a href="{{ route('etudiant.notes') }}" class="card-link">Voir tout →</a>
                     </div>
-                    @forelse($recentNotes as $note)
+                    
                         <div class="progress-row">
                             <div class="progress-label">
                                 <span>{{ $note->nom_module }}</span>
                                 <span
                                     class="{{ $note->note >= 12 ? 'grade-pass' : ($note->note >= 10 ? 'grade-warn' : 'grade-fail') }}"
                                     style="font-family:'SF Mono','Fira Code',monospace; font-size:13px; font-weight:600;">
-                                    {{ $note->note !== null ? number_format($note->note, 2) . '/20' : '—' }}
+                                    
                                 </span>
                             </div>
-                            @if($note->note !== null)
+                            
                                 <div class="progress-bar">
                                     <div class="progress-fill {{ $note->note >= 12 ? 'success' : ($note->note >= 10 ? 'warning' : 'danger') }}"
                                         style="width: {{ min(($note->note / 20) * 100, 100) }}%"></div>
                                 </div>
-                            @endif
+                            
                         </div>
-                    @empty
+                    
                         <div class="empty-state">
                             <svg viewBox="0 0 24 24">
                                 <path d="M9 11l3 3L22 4" />
@@ -622,7 +609,7 @@
                             </svg>
                             Aucune note disponible.
                         </div>
-                    @endforelse
+                    
                 </div>
 
                 {{-- RECLAMATIONS --}}
@@ -633,19 +620,19 @@
                             <div class="card-sub">Historique de vos signalements</div>
                         </div>
                     </div>
-                    @forelse($reclamations as $rec)
+                    
                         <div style="padding: 12px 20px; border-top: 1px solid var(--border);">
                             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
                                 <div>
                                     <div
                                         style="font-size:13px; font-weight:500; color:var(--text-primary); margin-bottom:3px;">
-                                        {{ $rec->nom_module }}
+                                        
                                     </div>
                                     <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
-                                        {{ Str::limit($rec->message, 60) }}
+                                        
                                     </div>
                                     <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">
-                                        {{ \Carbon\Carbon::parse($rec->date_reclamation)->format('d/m/Y') }}
+                                        
                                     </div>
                                 </div>
                                 <span class="badge badge-pending">
@@ -654,7 +641,7 @@
                                 </span>
                             </div>
                         </div>
-                    @empty
+                    
                         <div class="empty-state">
                             <svg viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="10" />
@@ -663,7 +650,7 @@
                             </svg>
                             Aucune réclamation soumise.
                         </div>
-                    @endforelse
+                    
                 </div>
             </div>
 
@@ -689,18 +676,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($notes as $row)
+                            
                                 <tr>
                                     <td style="font-weight:500;">{{ $row->nom_module }}</td>
                                     <td
                                         style="font-size:12px; color:var(--text-secondary); font-family:'SF Mono','Fira Code',monospace;">
-                                        {{ $row->code_module }}
+                                        
                                     </td>
                                     <td class="center">
-                                        @if($row->note !== null)
+                                        
                                             <span
                                                 class="grade-value {{ $row->note >= 12 ? 'grade-pass' : ($row->note >= 10 ? 'grade-warn' : 'grade-fail') }}">
-                                                {{ number_format($row->note, 2) }}
+                                                
                                             </span>
                                         @else
                                             <span style="color:var(--text-secondary);">—</span>

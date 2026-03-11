@@ -28,8 +28,8 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="{{ route('etudiant.dashboard') }}"
-                class="nav-item {{ request()->routeIs('etudiant.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}"
+                class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24">
                     <rect x="3" y="3" width="7" height="7" />
                     <rect x="14" y="3" width="7" height="7" />
@@ -38,16 +38,16 @@
                 </svg>
                 Dashboard
             </a>
-            <a href="{{ route('etudiant.notes') }}"
-                class="nav-item {{ request()->routeIs('etudiant.notes') ? 'active' : '' }}">
+            <a href="{{ route('admin.notes') }}"
+                class="nav-item {{ request()->routeIs('admin.notes') ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24">
                     <path d="M9 11l3 3L22 4" />
                     <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
                 </svg>
                 Mes Notes
             </a>
-            <a href="{{ route('etudiant.cours') }}"
-                class="nav-item {{ request()->routeIs('etudiant.cours') ? 'active' : '' }}">
+            <a href="{{ route('admin.cours') }}"
+                class="nav-item {{ request()->routeIs('admin.cours') ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24">
                     <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
