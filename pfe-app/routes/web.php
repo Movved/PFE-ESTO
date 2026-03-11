@@ -20,6 +20,10 @@ Route::middleware('auth')->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
+    Route::get('/admin/cours', function () {
+        return view('admin.cours');
+    })->name('admin.cours');
+
     Route::get('/enseignant/dashboard', function () {
         return view('enseignant.dashboard');
     })->name('enseignant.dashboard');
