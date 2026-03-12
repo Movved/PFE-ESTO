@@ -76,3 +76,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Escape' && document.getElementById('modal')) window.closeModal();
     });
 });
+
+// loading tout les fonction bug fix
+
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('no-transitions').remove();
+    }, 100);
+});
