@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EtudiantController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,17 +17,28 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/admin/cours', function () {
-        return view('admin.cours');
-    })->name('admin.cours');
+        #Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
 
-    Route::get('/admin/notes', function () {
-        return view('admin.notes');
-    })->name('admin.notes');
+        // Placeholders — swap the closure for a real controller when ready
+        Route::get('/notes',        fn() => view('admin.notes'))->name('notes.index');
+        Route::get('/etudiants',    fn() => view('admin.etudiants.index'))->name('etudiants.index');
+        Route::get('/etudiants/create', fn() => view('admin.etudiants.create'))->name('etudiants.create');
+        Route::get('/enseignants',  fn() => view('admin.enseignants.index'))->name('enseignants.index');
+        Route::get('/enseignants/create', fn() => view('admin.enseignants.create'))->name('enseignants.create');
+        Route::get('/filieres',     fn() => view('admin.filieres.index'))->name('filieres.index');
+        Route::get('/filieres/create', fn() => view('admin.filieres.create'))->name('filieres.create');
+        Route::get('/modules',      fn() => view('admin.modules.index'))->name('modules.index');
+        Route::get('/modules/create', fn() => view('admin.modules.create'))->name('modules.create');
+        Route::get('/semestres',    fn() => view('admin.semestres.index'))->name('semestres.index');
+        Route::get('/reclamations', fn() => view('admin.reclamations.index'))->name('reclamations.index');
+        Route::get('/reclamations/{id}', fn($id) => view('admin.reclamations.show', ['id' => $id]))->name('reclamations.show');
+        Route::get('/logs',         fn() => view('admin.logs.index'))->name('logs.index');
+
+    });
+
 
     Route::get('/enseignant/dashboard', function () {
         return view('enseignant.dashboard');
