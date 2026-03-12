@@ -36,7 +36,11 @@ class AuthenticatedSessionController extends Controller
             case 'ADMIN':
                 return redirect('/admin/dashboard');
             case 'ENSEIGNANT':
-                return redirect('/enseignant/dashboard');
+                    $enseignant = \DB::table('ENSEIGNANT')->where('id_user', $user->id_user)->first();
+                    if ($enseignant && $enseignant->is_chef) {
+                        return redirect()->route('chef.dashboard');
+                    }
+                    return redirect()->route('enseignant.dashboard');
             case 'ETUDIANT':
                 return redirect('/etudiant/dashboard');
             default:
