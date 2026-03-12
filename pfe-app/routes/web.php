@@ -4,8 +4,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EtudiantController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,45 +42,17 @@ Route::middleware('auth')->group(function () {
         return view('enseignant.dashboard');
     })->name('enseignant.dashboard');
 
-    Route::get('/etudiant/dashboard', function () {
-        $etudiant = DB::table('ETUDIANT')
-            ->where('id_user', Auth::id())
-            ->first();
-
-        $notes = collect();
-
-        if ($etudiant) {
-            $notes = DB::table('NOTE')
-                ->join('MODULE_', 'NOTE.id_module', '=', 'MODULE_.id_module')
-                ->leftJoin('RECLAMATION', 'RECLAMATION.id_note', '=', 'NOTE.id_note')
-                ->where('NOTE.id_etudiant', $etudiant->id_etudiant)
-                ->select(
-                    'NOTE.id_note',
-                    'NOTE.note',
-                    'NOTE.rattrapage',
-                    'MODULE_.code_module',
-                    'MODULE_.nom_module',
-                    DB::raw('COUNT(RECLAMATION.id_reclamation) > 0 AS has_reclamation')
-                )
-                ->groupBy(
-                    'NOTE.id_note',
-                    'NOTE.note',
-                    'NOTE.rattrapage',
-                    'MODULE_.code_module',
-                    'MODULE_.nom_module'
-                )
-                ->get();
-        }
-
-        return view('etudiant.dashboard', compact('notes'));
-    })->name('etudiant.dashboard');
-
+    Route::get('/etudiant/dashboard', [EtudiantController::class, 'dashboard'])->name('etudiant.dashboard');
     Route::get('/etudiant/notes', [EtudiantController::class, 'notes'])->name('etudiant.notes');
+    Route::get('/etudiant/cours', [EtudiantController::class, 'cours'])->name('etudiant.cours');
     Route::post('/etudiant/reclamation', [EtudiantController::class, 'storeReclamation'])->name('etudiant.reclamation.store');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
