@@ -11,17 +11,21 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'utilisateur';
+    protected $table      = 'utilisateur';
     protected $primaryKey = 'id_user';
-    public $timestamps = false; // Using date_creation instead
+
+    public $rememberTokenName = false;
+    public $timestamps = false;
 
     protected $fillable = [
-        'nom', 'prenom', 'username', 'mot_de_passe', 'role', 'actif'
+        'nom',
+        'prenom',
+        'email',
+        'mot_de_passe',
+        'role',
+        'actif',
     ];
 
-    protected $hidden = ['mot_de_passe'];
-
-    // Map 'mot_de_passe' to Laravel's internal password system
     public function getAuthPassword()
     {
         return $this->mot_de_passe;

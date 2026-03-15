@@ -1,86 +1,352 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PFE - Gestion Académique</title>
-
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESTO Oujda</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: var(--background);
+            overflow: auto;
+        }
+
+        /* NAV */
+        .nav {
+            height: 72px;
+            min-height: 60px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-logo-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .nav-logo-text {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background 0.15s ease;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--background);
+        }
+
+        /* HERO */
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 24px 48px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .hero-tag span {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.15;
+            max-width: 680px;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-title em {
+            font-style: normal;
+            color: var(--primary);
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 480px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-actions .btn {
+            padding: 10px 22px;
+            font-size: 14px;
+        }
+
+        /* CARDS */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            max-width: 860px;
+            width: 100%;
+            margin: 64px auto 0;
+            padding: 0 24px;
+            text-align: left;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .feature-icon svg {
+            width: 36px;
+            height: 36px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 32px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 64px;
+        }
+
+        @media (max-width: 680px) {
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                padding: 0 20px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased">
-    
-    <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-red-500 selection:text-white">
-        <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-            
-            <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
-                <div class="flex lg:justify-center lg:col-start-2">
-                    <h1 class="text-3xl font-bold text-red-600">PFE <span class="text-gray-800">ESTO</span></h1>
-                </div>
-                
-                <nav class="-mx-3 flex flex-1 justify-end">
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="rounded-md px-4 py-2 bg-red-600 text-white font-semibold shadow-sm hover:bg-red-500 transition focus:outline-none">
-                            Connexion
-                        </a>
-                    @endauth
-                </nav>
-            </header>
 
-            <main class="mt-6">
-                <div class="text-center">
-                    <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-6xl">
-                        Plateforme de Gestion des Évaluations
-                    </h2>
-                    <p class="mt-6 text-lg leading-8 text-gray-600">
-                        Bienvenue sur l'espace numérique de l'École Supérieure de Technologie d'Oujda. 
-                        Une solution complète pour les étudiants, les enseignants et l'administration.
-                    </p>
-                </div>
+<body>
 
-                <div class="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-3">
-                    <div class="flex flex-col items-start gap-4 rounded-lg bg-white p-6 shadow-md ring-1 ring-gray-200">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
-                            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Administration</h3>
-                        <p class="text-sm text-gray-500 text-left">Gérez les comptes utilisateurs, les filières et les configurations globales du système.</p>
-                    </div>
+    <nav class="nav">
+        <a href="/" class="nav-logo">
+            <div class="nav-logo-icon">
+                #<!--icon de l'app-->
+            </div>
+            <!--nom de l'app-->
+            <span class="nav-logo-text">#</span>
+        </a>
 
-                    <div class="flex flex-col items-start gap-4 rounded-lg bg-white p-6 shadow-md ring-1 ring-gray-200">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                            <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Enseignants</h3>
-                        <p class="text-sm text-gray-500 text-left">Saisissez les notes, gérez vos modules et suivez les performances de vos classes.</p>
-                    </div>
-
-                    <div class="flex flex-col items-start gap-4 rounded-lg bg-white p-6 shadow-md ring-1 ring-gray-200">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Étudiants</h3>
-                        <p class="text-sm text-gray-500 text-left">Consultez vos résultats d'examen, votre emploi du temps et votre historique académique.</p>
-                    </div>
-                </div>
-            </main>
-
-            <footer class="py-16 text-center text-sm text-gray-500">
-                &copy; {{ date('Y') }} ESTO Oujda - Tous droits réservés.
-            </footer>
+        <div class="nav-actions">
+            @auth
+                @if(Auth::user()->role === 'ETUDIANT')
+                    <a href="{{ route('etudiant.dashboard') }}" class="btn btn-primary">Mon espace</a>
+                @elseif(Auth::user()->role === 'ENSEIGNANT')
+                    <a href="{{ route('enseignant.dashboard') }}" class="btn btn-primary">Mon espace</a>
+                @elseif(Auth::user()->role === 'ADMIN')
+                    <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Mon espace</a>
+                @endif
+            @else
+                <a href="{{ route('login') }}" class="btn btn-secondary">Connexion</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="btn btn-primary">S'inscrire</a>
+                @endif
+            @endauth
         </div>
-    </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-tag">
+            <span></span>
+            ESTO Oujda — Plateforme académique
+        </div>
+
+        <h1 class="hero-title">
+            Gérez vos <em>évaluations</em><br>en toute simplicité
+        </h1>
+
+        <p class="hero-sub">
+            Un espace numérique unifié pour les étudiants, enseignants et l'administration de l'École Supérieure de
+            Technologie d'Oujda.
+        </p>
+
+        <div class="hero-actions">
+            @auth
+                @if(Auth::user()->role === 'ETUDIANT')
+                    <a href="{{ route('etudiant.dashboard') }}" class="btn btn-primary">Accéder à mon espace</a>
+                @elseif(Auth::user()->role === 'ENSEIGNANT')
+                    <a href="{{ route('enseignant.dashboard') }}" class="btn btn-primary">Accéder à mon espace</a>
+                @elseif(Auth::user()->role === 'ADMIN')
+                    <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Accéder à mon espace</a>
+                @endif
+            @else
+                <a href="{{ route('register') }}" class="btn btn-primary">Commencer</a>
+                <a href="{{ route('login') }}" class="btn btn-secondary">Se connecter</a>
+            @endauth
+        </div>
+
+        <div class="cards">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="feature-title">Administration</div>
+                <div class="feature-desc">Gérez les comptes, les filières et les configurations globales du système.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                    </svg>
+                </div>
+                <div class="feature-title">Enseignants</div>
+                <div class="feature-desc">Saisissez les notes, gérez vos modules et suivez les performances de vos
+                    classes.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 11l3 3L22 4" />
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                    </svg>
+                </div>
+                <div class="feature-title">Étudiants</div>
+                <div class="feature-desc">Consultez vos résultats, signalez des erreurs et suivez votre parcours
+                    académique.</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        &copy; {{ date('Y') }} ESTO Oujda — Tous droits réservés.
+    </footer>
+
 </body>
+
 </html>
