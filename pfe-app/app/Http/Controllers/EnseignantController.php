@@ -404,14 +404,8 @@ class EnseignantController extends Controller
                 ->orderByDesc('reclamation.date_reclamation')
                 ->get();
         }
+        $reclamations->each(fn ($r) => $r->traite = false);
 
-        // Apply defaults for optional columns regardless of whether there are results
-        if (!Schema::hasColumn('reclamation', 'traite')) {
-            $reclamations->each(fn ($r) => $r->traite = false);
-        }
-        if (!Schema::hasColumn('reclamation', 'reponse')) {
-            $reclamations->each(fn ($r) => $r->reponse = null);
-        }
 
         $pendingCount = $this->getPendingReclamationsCount($enseignant->id_enseignant);
         return view('enseignant.reclamations', compact('reclamations', 'pendingCount'));
@@ -445,6 +439,6 @@ class EnseignantController extends Controller
             DB::table('reclamation')->where('id_reclamation', $id)->update($data);
         }
 
-        return back()->with('success', 'Réclamation marquée comme traitée.');
+    return back()->with('success', 'Réclamation consultée.');
     }
 }

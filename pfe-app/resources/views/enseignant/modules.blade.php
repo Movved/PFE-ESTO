@@ -63,16 +63,8 @@
 <div class="main">
     <header class="topbar">
         <span class="topbar-title">Mes Modules</span>
-        <div class="topbar-search">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input type="text" placeholder="Rechercher un module..." />
-        </div>
+        
         <button class="toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Thème sombre"><span class="toggle-knob"></span></button>
-        <div class="topbar-icon-btn" style="position:relative;">
-            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-            @if(isset($pendingCount) && $pendingCount > 0)<span class="notif-dot"></span>@endif
-        </div>
-        <div class="topbar-icon-btn"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
     </header>
 
     <main class="content">

@@ -13,20 +13,20 @@
     <style>
         /* Modal styles in case they're not in your CSS */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-overlay.open {
-            display: flex;
-        }
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;  /* Increase this — another element may be on top */
+    justify-content: center;
+    align-items: center;
+}
+.modal-overlay.open {
+    display: flex !important;
+}
         .modal {
             background-color: white;
             border-radius: 8px;
@@ -233,12 +233,7 @@
             <button class="toggle-btn" id="theme-toggle">
                 <span class="toggle-knob"></span>
             </button>
-            <div class="topbar-icon-btn" style="position:relative;">
-                @if(isset($pendingCount) && $pendingCount > 0)
-                    <span class="notif-dot"></span>
-                @endif
-                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg>
-            </div>
+            
         </header>
 
         <main class="content">
@@ -327,13 +322,13 @@
                                     @endif
                                 </td>
                                 <td class="center">
-                                    <button type="button" class="btn-voir" onclick='openModal(
-                                        "{{ $rec->id_reclamation }}",
-                                        "{{ addslashes(($rec->prenom_etudiant ?? '').' '.($rec->nom_etudiant ?? '')) }}",
-                                        "{{ addslashes($rec->nom_module ?? '') }}",
-                                        {{ isset($rec->note) && $rec->note !== null ? $rec->note : 'null' }},
-                                        "{{ addslashes($rec->message ?? '') }}"
-                                    )'>Voir</button>
+                                    <button type="button" class="btn-voir"
+                                        data-id="{{ $rec->id_reclamation }}"
+                                        data-etudiant="{{ ($rec->prenom_etudiant ?? '').' '.($rec->nom_etudiant ?? '') }}"
+                                        data-module="{{ $rec->nom_module ?? '' }}"
+                                        data-note="{{ $rec->note ?? '' }}"
+                                        data-message="{{ $rec->message ?? '' }}"
+                                    >Voir</button>
                                 </td>
                             </tr>
                             @empty
@@ -354,14 +349,14 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal-overlay" id="rec-modal" onclick="if(event.target===this)closeModal()">
+<div class="modal-overlay" id="rec-modal">
         <div class="modal">
             <div class="modal-header">
                 <div>
                     <div class="modal-title">Détail de la réclamation</div>
                     <div class="modal-sub" id="modal-sub"></div>
                 </div>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
+<button type="button" class="modal-close" id="modal-close-btn">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-note-row">
@@ -385,82 +380,68 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Fermer</button>
+<button type="button" class="btn btn-secondary" id="modal-fermer-btn">Fermer</button>
                 <button type="submit" form="rec-form" class="btn btn-primary">Marquer comme traitée</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Base URL for reclamations
-        var reclamationsBaseUrl = '{{ url("enseignant/reclamations") }}';
+    var reclamationsBaseUrl = '{{ url("enseignant/reclamations") }}';
 
-        // Theme toggle function
-        function toggleTheme() {
-            var h = document.documentElement;
-            var b = document.getElementById('theme-toggle');
-            h.classList.toggle('dark');
-            b.classList.toggle('on');
-            localStorage.setItem('theme', h.classList.contains('dark') ? 'dark' : 'light');
-        }
+    // Theme
+    function toggleTheme() {
+        document.documentElement.classList.toggle('dark');
+        document.getElementById('theme-toggle')?.classList.toggle('on');
+        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+    if (localStorage.getItem('theme') === 'dark') {
+        document.getElementById('theme-toggle')?.classList.add('on');
+    }
+    document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 
-        // Initialize theme
-        if (localStorage.getItem('theme') === 'dark') {
-            document.getElementById('theme-toggle')?.classList.add('on');
-        }
+    // Modal open via data attributes — no inline JS, safe against special chars
+    document.querySelectorAll('.btn-voir').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var id       = this.dataset.id;
+            var etudiant = this.dataset.etudiant;
+            var module   = this.dataset.module;
+            var note     = this.dataset.note;
+            var message  = this.dataset.message;
 
-        // Add theme toggle event listener
-        document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
-
-        // Open modal function
-        function openModal(id, etudiant, module, note, message) {
-            console.log('Opening modal with:', {id, etudiant, module, note, message}); // Debug
-            
-            // Set modal content
-            document.getElementById('modal-sub').textContent = etudiant + ' - ' + module;
+            document.getElementById('modal-sub').textContent = etudiant + ' — ' + module;
             document.getElementById('modal-msg').textContent = message || 'Aucun message';
-            document.getElementById('modal-rec-id').value = id;
-            
-            // Set form action
-            document.getElementById('rec-form').action = reclamationsBaseUrl + '/' + id + '/traiter';
-            
-            // Handle note display
+            document.getElementById('modal-rec-id').value    = id;
+            document.getElementById('rec-form').action       = reclamationsBaseUrl + '/' + id + '/traiter';
+
             var el = document.getElementById('modal-note');
-            if (note !== null && note !== undefined && note !== 'null' && note !== '') {
-                var noteValue = parseFloat(note);
-                if (!isNaN(noteValue)) {
-                    el.textContent = noteValue.toFixed(2) + ' / 20';
-                    // Remove previous classes and add new one
-                    el.classList.remove('grade-pass', 'grade-warn', 'grade-fail');
-                    if (noteValue >= 12) {
-                        el.classList.add('grade-pass');
-                    } else if (noteValue >= 10) {
-                        el.classList.add('grade-warn');
-                    } else {
-                        el.classList.add('grade-fail');
-                    }
-                } else {
-                    el.textContent = 'Note invalide';
-                }
+            el.classList.remove('grade-pass', 'grade-warn', 'grade-fail');
+            if (note !== '' && !isNaN(parseFloat(note))) {
+                var v = parseFloat(note);
+                el.textContent = v.toFixed(2) + ' / 20';
+                el.classList.add(v >= 12 ? 'grade-pass' : (v >= 10 ? 'grade-warn' : 'grade-fail'));
             } else {
                 el.textContent = 'Non noté';
             }
-            
-            // Show modal
+
             document.getElementById('rec-modal').classList.add('open');
-        }
-
-        // Close modal function
-        function closeModal() {
-            document.getElementById('rec-modal').classList.remove('open');
-        }
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
         });
-    </script>
+    });
+
+    function closeModal() {
+    document.getElementById('rec-modal').classList.remove('open');
+}
+
+document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+document.getElementById('modal-fermer-btn').addEventListener('click', closeModal);
+
+document.getElementById('rec-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
 </body>
 </html>
