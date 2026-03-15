@@ -24,6 +24,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 
+    // ─── ADMIN ────────────────────────────────────────────────────────────────
     Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
@@ -37,18 +38,12 @@ Route::middleware('auth')->group(function () {
         Route::delete('/etudiants/{id}',   [AdminEtudiant::class, 'destroy'])->name('etudiants.destroy');
 
         // Enseignants
-        Route::get('/enseignant/dashboard', [EnseignantController::class, 'dashboard'])->name('enseignant.dashboard');
-
-        Route::get('/enseignant/modules', [EnseignantController::class, 'modules'])->name('enseignant.modules');
-        Route::get('/enseignant/modules/{id}', [EnseignantController::class, 'showModule'])->name('enseignant.module.show');
-
-        Route::get('/enseignant/notes', [EnseignantController::class, 'notes'])->name('enseignant.notes');
-        Route::get('/enseignant/notes/{id}', [EnseignantController::class, 'notesForm'])->name('enseignant.notes.form');
-        Route::post('/enseignant/notes/{id}', [EnseignantController::class, 'storeNotes'])->name('enseignant.notes.store');
-        Route::get('/enseignant/notes/{id}/pv', [EnseignantController::class, 'pv'])->name('enseignant.notes.pv');
-
-        Route::get('/enseignant/reclamations', [EnseignantController::class, 'reclamations'])->name('enseignant.reclamations');
-        Route::patch('/enseignant/reclamations/{id}/traiter', [EnseignantController::class, 'traiterReclamation'])->name('enseignant.reclamations.traiter');
+        Route::get('/enseignants',           [AdminEnseignant::class, 'index'])->name('enseignants');
+        Route::get('/enseignants/create',    [AdminEnseignant::class, 'create'])->name('enseignants.create');
+        Route::post('/enseignants',          [AdminEnseignant::class, 'store'])->name('enseignants.store');
+        Route::get('/enseignants/{id}/edit', [AdminEnseignant::class, 'edit'])->name('enseignants.edit');
+        Route::put('/enseignants/{id}',      [AdminEnseignant::class, 'update'])->name('enseignants.update');
+        Route::delete('/enseignants/{id}',   [AdminEnseignant::class, 'destroy'])->name('enseignants.destroy');
 
         // Filières
         Route::get('/filieres',           [AdminFiliere::class, 'index'])->name('filieres');
@@ -89,4 +84,29 @@ Route::middleware('auth')->group(function () {
 
     });
 
+    // ─── ENSEIGNANT ───────────────────────────────────────────────────────────
+    Route::get('/enseignant/dashboard',  [EnseignantController::class, 'dashboard'])->name('enseignant.dashboard');
+    Route::get('/enseignant/modules',    [EnseignantController::class, 'modules'])->name('enseignant.modules');
+    Route::get('/enseignant/modules/{id}', [EnseignantController::class, 'showModule'])->name('enseignant.module.show');
+    Route::get('/enseignant/notes',      [EnseignantController::class, 'notes'])->name('enseignant.notes');
+    Route::get('/enseignant/notes/{id}', [EnseignantController::class, 'notesForm'])->name('enseignant.notes.form');
+    Route::post('/enseignant/notes/{id}',[EnseignantController::class, 'storeNotes'])->name('enseignant.notes.store');
+    Route::get('/enseignant/notes/{id}/pv', [EnseignantController::class, 'pv'])->name('enseignant.notes.pv');
+    Route::get('/enseignant/reclamations', [EnseignantController::class, 'reclamations'])->name('enseignant.reclamations');
+    Route::patch('/enseignant/reclamations/{id}/traiter', [EnseignantController::class, 'traiterReclamation'])->name('enseignant.reclamations.traiter');
+
+    // ─── ETUDIANT ─────────────────────────────────────────────────────────────
+    Route::get('/etudiant/dashboard',    [EtudiantController::class, 'dashboard'])->name('etudiant.dashboard');
+    Route::get('/etudiant/notes',        [EtudiantController::class, 'notes'])->name('etudiant.notes');
+    Route::get('/etudiant/cours',        [EtudiantController::class, 'cours'])->name('etudiant.cours');
+    Route::post('/etudiant/reclamation', [EtudiantController::class, 'storeReclamation'])->name('etudiant.reclamation.store');
+
+    // ─── PROFILE ──────────────────────────────────────────────────────────────
+    Route::get('/profile',          [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile',        [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile',       [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+
 });
+
+require __DIR__ . '/auth.php';
