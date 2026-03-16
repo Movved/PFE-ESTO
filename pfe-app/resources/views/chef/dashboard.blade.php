@@ -126,7 +126,7 @@
                                         <div style="font-weight:500;">{{ $m->nom_module }}</div>
                                         <div><span class="code-badge">{{ $m->code_module }}</span></div>
                                     </td>
-                                    <td style="font-size:12px; color:var(--text-secondary);">{{ $m->nom_filiere }}</td>
+                                    <td>{{ $m->nom_filiere }}</td>
                                     <td>
                                         <span class="badge {{ $m->cloture ? 'badge-closed' : 'badge-open' }}">
                                             <span class="badge-dot"></span>
