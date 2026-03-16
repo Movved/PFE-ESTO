@@ -15,83 +15,24 @@
 
 <body>
 
-    <aside class="sidebar">
-    <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
-            </svg>
-        </div>
-        <span class="sidebar-logo-text">Gestionnaire</span>
-    </div>
+    @if(Auth::user()->role === 'ETUDIANT')
+        @include('layouts.sidebar-etudiant')
 
-    <nav class="sidebar-nav">
-        @if(Auth::user()->role === 'ENSEIGNANT')
-            <a href="{{ route('enseignant.dashboard') }}" class="nav-item {{ request()->routeIs('enseignant.dashboard') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                Dashboard
-            </a>
-            <a href="{{ route('enseignant.modules') }}" class="nav-item {{ request()->routeIs('enseignant.modules*') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-                Mes Modules
-            </a>
-            <a href="{{ route('enseignant.notes') }}" class="nav-item {{ request()->routeIs('enseignant.notes*') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-                Saisie des Notes
-            </a>
-            <a href="{{ route('enseignant.reclamations') }}" class="nav-item {{ request()->routeIs('enseignant.reclamations*') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-                Réclamations
-            </a>
+    @elseif(Auth::user()->role === 'ENSEIGNANT')
+        @php
+            $enseignant = \DB::table('ENSEIGNANT')->where('id_user', Auth::user()->id_user)->first();
+        @endphp
 
-        @elseif(Auth::user()->role === 'ETUDIANT')
-            <a href="{{ route('etudiant.dashboard') }}" class="nav-item {{ request()->routeIs('etudiant.dashboard') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                Dashboard
-            </a>
-            <a href="{{ route('etudiant.notes') }}" class="nav-item {{ request()->routeIs('etudiant.notes') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-                Mes Notes
-            </a>
-            <a href="{{ route('etudiant.cours') }}" class="nav-item {{ request()->routeIs('etudiant.cours') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-                Mes Cours
-            </a>
-
-        @elseif(Auth::user()->role === 'ADMIN')
-            <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                Dashboard
-            </a>
+        @if($enseignant && $enseignant->is_chef)
+            @include('layouts.sidebar-chef')
+        @else
+            @include('layouts.sidebar-prof')
         @endif
 
-        <a href="{{ route('profile.edit') }}" class="nav-item active">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Profil
-        </a>
+    @elseif(Auth::user()->role === 'ADMIN')
+        @include('layouts.sidebar-admin')
+    @endif
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="nav-item" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;font-size:14px;font-family:inherit;color:var(--text-secondary);">
-                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                Déconnexion
-            </button>
-        </form>
-    </nav>
-
-    <div class="sidebar-footer">
-        <div class="sidebar-user">
-            <div class="user-avatar-small">
-                {{ strtoupper(substr(Auth::user()->prenom, 0, 1)) }}{{ strtoupper(substr(Auth::user()->nom, 0, 1)) }}
-            </div>
-            <div class="sidebar-user-info">
-                <div class="sidebar-user-name">{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
-                <div class="sidebar-user-role">{{ ucfirst(strtolower(Auth::user()->role)) }}</div>
-            </div>
-        </div>
-    </div>
-</aside>
     {{-- MAIN --}}
     <div class="main">
 

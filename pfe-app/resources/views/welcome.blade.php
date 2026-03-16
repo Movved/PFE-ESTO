@@ -10,7 +10,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESTO Oujda</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body {
             display: flex;
@@ -243,6 +242,7 @@
             }
         }
     </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body>
@@ -250,10 +250,9 @@
     <nav class="nav">
         <a href="/" class="nav-logo">
             <div class="nav-logo-icon">
-                #<!--icon de l'app-->
+
             </div>
-            <!--nom de l'app-->
-            <span class="nav-logo-text">#</span>
+            <span class="nav-logo-text"></span>
         </a>
 
         <div class="nav-actions">
@@ -277,7 +276,7 @@
     <section class="hero">
         <div class="hero-tag">
             <span></span>
-            ESTO Oujda — Plateforme académique
+            ESTO Oujda : Plateforme académique
         </div>
 
         <h1 class="hero-title">
