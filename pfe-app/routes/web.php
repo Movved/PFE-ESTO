@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\FiliereController     as AdminFiliere;
 use App\Http\Controllers\Admin\ModuleController      as AdminModule;
 use App\Http\Controllers\Admin\SemestreController    as AdminSemestre;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChefController;
 
 Route::get('/', function () {
     return view('welcome');
