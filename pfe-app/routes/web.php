@@ -16,12 +16,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChefController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()
+        ->view('welcome')
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', '0');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -110,7 +110,6 @@ Route::middleware('auth')->group(function () {
 
 });
 // Pour chef de departement
-
 Route::get('/chef/dashboard', [ChefController::class, 'dashboard'])->name('chef.dashboard');
 Route::get('/chef/modules', [ChefController::class, 'modules'])->name('chef.modules');
 Route::post('/chef/modules', [ChefController::class, 'storeModule'])->name('chef.modules.store');
