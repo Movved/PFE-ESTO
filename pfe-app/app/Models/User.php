@@ -9,12 +9,13 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    protected $table      = 'Utilisateur';
-    protected $primaryKey = 'id_user';
-        
+    use Notifiable;
 
-    public $rememberTokenName = false; 
-    public    $timestamps = false;
+    protected $table      = 'utilisateur';
+    protected $primaryKey = 'id_user';
+
+    public $rememberTokenName = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'nom',
@@ -28,5 +29,9 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->mot_de_passe;
+    }
+    public function getAuthPasswordName()
+    {
+        return 'mot_de_passe';
     }
 }
