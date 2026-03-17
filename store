@@ -1,0 +1,862 @@
+[1mdiff --git a/pfe-app/app/Http/Controllers/Auth/RegisteredUserController.php b/pfe-app/app/Http/Controllers/Auth/RegisteredUserController.php[m
+[1mindex a40d370..71fab8b 100644[m
+[1m--- a/pfe-app/app/Http/Controllers/Auth/RegisteredUserController.php[m
+[1m+++ b/pfe-app/app/Http/Controllers/Auth/RegisteredUserController.php[m
+[36m@@ -7,44 +7,41 @@[m
+ use Illuminate\Auth\Events\Registered;[m
+ use Illuminate\Http\RedirectResponse;[m
+ use Illuminate\Http\Request;[m
+[31m-use Illuminate\Support\Facades\Auth;[m
+ use Illuminate\Support\Facades\Hash;[m
+ use Illuminate\Validation\Rules;[m
+[31m-use Illuminate\View\View;[m
+ [m
+ class RegisteredUserController extends Controller[m
+ {[m
+     /**[m
+      * Display the registration view.[m
+      */[m
+[31m-    public function create(): View[m
+[32m+[m[32m    public function create()[m
+     {[m
+         return view('auth.register');[m
+     }[m
+ [m
+     /**[m
+      * Handle an incoming registration request.[m
+[31m-     *[m
+[31m-     * @throws \Illuminate\Validation\ValidationException[m
+      */[m
+     public function store(Request $request): RedirectResponse[m
+     {[m
+         $request->validate([[m
+[31m-            'nom' => ['required', 'string', 'max:255'],[m
+[31m-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],[m
+[32m+[m[32m            'nom'      => ['required', 'string', 'max:255'],[m
+[32m+[m[32m            'prenom'   => ['required', 'string', 'max:255'],[m
+[32m+[m[32m            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],[m
+             'password' => ['required', 'confirmed', Rules\Password::defaults()],[m
+[32m+[m[32m            'role'     => ['required', 'in:ETUDIANT,ENSEIGNANT'], // ← validate role[m
+         ]);[m
+[31m-[m
+[31m-        $user = User::create([[m
+[31m-            'name' => $request->name,[m
+[31m-            'email' => $request->email,[m
+[31m-            'password' => Hash::make($request->password),[m
+[32m+[m[41m        [m
+[32m+[m[32m        User::create([[m
+[32m+[m[32m            'nom'          => $request->nom,[m
+[32m+[m[32m            'prenom'       => $request->prenom,[m
+[32m+[m[32m            'email'        => $request->email,[m
+[32m+[m[32m            'mot_de_passe' => Hash::make($request->password),[m
+[32m+[m[32m            'role'         => $request->role,[m[41m [m
+[32m+[m[32m            'actif'        => 1,[m
+         ]);[m
+[31m-[m
+[31m-        event(new Registered($user));[m
+[31m-[m
+[31m-        Auth::login($user);[m
+[31m-[m
+[31m-        return redirect(route('dashboard', absolute: false));[m
+[32m+[m[41m    [m
+[32m+[m[32m        return redirect()->route('login')->with('status', 'Compte créé avec succès ! Connectez-vous.');[m
+     }[m
+[31m-}[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/pfe-app/app/Http/Controllers/EtudiantController.php b/pfe-app/app/Http/Controllers/EtudiantController.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0127dfd[m
+[1m--- /dev/null[m
+[1m+++ b/pfe-app/app/Http/Controllers/EtudiantController.php[m
+[36m@@ -0,0 +1,85 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32mnamespace App\Http\Controllers;[m
+[32m+[m
+[32m+[m[32muse Illuminate\Support\Facades\Auth;[m
+[32m+[m[32muse Illuminate\Http\Request;[m
+[32m+[m[32muse Illuminate\Support\Facades\DB;[m
+[32m+[m[32muse App\Models\Reclamation;[m
+[32m+[m[32muse App\Models\Note;[m
+[32m+[m
+[32m+[m[32mclass EtudiantController extends Controller[m
+[32m+[m[32m{[m
+[32m+[m[32m    // Tableau des notes[m
+[32m+[m[32m    public function notes()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $userId = Auth::id();[m
+[32m+[m
+[32m+[m[32m        $notes = DB::table('Note')[m
+[32m+[m[32m            ->join('Evaluation', 'Note.id_evaluation', '=', 'Evaluation.id_evaluation')[m
+[32m+[m[32m            ->join('Module',     'Evaluation.id_module', '=', 'Module.id_module')[m
+[32m+[m[32m            ->leftJoin('Reclamation', function ($join) use ($userId) {[m
+[32m+[m[32m                $join->on('Reclamation.id_note', '=', 'Note.id_note')[m
+[32m+[m[32m                     ->where('Reclamation.id_user', '=', $userId)[m
+[32m+[m[32m                     ->where('Reclamation.statut', '=', 'EN_ATTENTE');[m
+[32m+[m[32m            })[m
+[32m+[m[32m            ->where('Note.id_user', $userId)[m
+[32m+[m[32m            ->select([m
+[32m+[m[32m                'Note.id_note',[m
+[32m+[m[32m                'Note.note',[m
+[32m+[m[32m                'Note.rattrapage',[m
+[32m+[m[32m                'Note.note_finale',[m
+[32m+[m[32m                'Evaluation.libelle',[m
+[32m+[m[32m                'Evaluation.type',[m
+[32m+[m[32m                'Module.nom_module',[m
+[32m+[m[32m                DB::raw('COUNT(Reclamation.id_reclamation) > 0 as has_reclamation')[m
+[32m+[m[32m            )[m
+[32m+[m[32m            ->groupBy([m
+[32m+[m[32m                'Note.id_note', 'Note.note', 'Note.rattrapage', 'Note.note_finale',[m
+[32m+[m[32m                'Evaluation.libelle', 'Evaluation.type', 'Module.nom_module'[m
+[32m+[m[32m            )[m
+[32m+[m[32m            ->get();[m
+[32m+[m
+[32m+[m[32m        return view('etudiant.notes', compact('notes'));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Fonction de reclamation button[m
+[32m+[m[32m    public function storeReclamation(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $request->validate([[m
+[32m+[m[32m            'id_note' => ['required', 'integer'],[m
+[32m+[m[32m            'message' => ['required', 'string', 'max:1000'],[m
+[32m+[m[32m        ]);[m
+[32m+[m[41m    [m
+[32m+[m[32m        $userId = Auth::user()->id_user;[m[41m [m
+[32m+[m[41m    [m
+[32m+[m[32m        $note = \DB::table('note')[m
+[32m+[m[32m                   ->where('id_note', $request->id_note)[m
+[32m+[m[32m                   ->where('id_user', $userId)[m
+[32m+[m[32m                   ->first();[m
+[32m+[m[41m    [m
+[32m+[m[32m        if (!$note) {[m
+[32m+[m[32m            return back()->with('error', 'Note introuvable.');[m
+[32m+[m[32m        }[m
+[32m+[m[41m    [m
+[32m+[m[32m        $exists = \DB::table('eclamation')[m
+[32m+[m[32m                     ->where('id_note', $request->id_note)[m
+[32m+[m[32m                     ->where('id_user', $userId)[m
+[32m+[m[32m                     ->where('statut', 'EN_ATTENTE')[m
+[32m+[m[32m                     ->exists();[m
+[32m+[m[41m    [m
+[32m+[m[32m        if ($exists) {[m
+[32m+[m[32m            return back()->with('error', 'Vous avez déjà une réclamation en attente pour cette note.');[m
+[32m+[m[32m        }[m
+[32m+[m[41m    [m
+[32m+[m[32m        \DB::table('Reclamation')->insert([[m
+[32m+[m[32m            'id_note'          => $request->id_note,[m
+[32m+[m[32m            'id_user'          => $userId,[m
+[32m+[m[32m            'message'          => $request->message,[m
+[32m+[m[32m            'statut'           => 'EN_ATTENTE',[m
+[32m+[m[32m            'date_reclamation' => now(),[m
+[32m+[m[32m        ]);[m
+[32m+[m[41m    [m
+[32m+[m[32m        return back()->with('success', 'Réclamation envoyée avec succès.');[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/pfe-app/app/Models/User.php b/pfe-app/app/Models/User.php[m
+[1mindex 8f1203e..d64cb54 100644[m
+[1m--- a/pfe-app/app/Models/User.php[m
+[1m+++ b/pfe-app/app/Models/User.php[m
+[36m@@ -9,19 +9,20 @@[m
+ [m
+ class User extends Authenticatable[m
+ {[m
+[31m-    use Notifiable;[m
+[31m-[m
+[31m-    protected $table = 'Utilisateur';[m
+[32m+[m[32m    protected $table      = 'Utilisateur';[m
+     protected $primaryKey = 'id_user';[m
+[31m-    public $timestamps = false; // Using date_creation instead[m
+[32m+[m
+[32m+[m[32m    public $rememberTokenName = false;[m[41m [m
+ [m
+     protected $fillable = [[m
+[31m-        'nom', 'prenom', 'username', 'mot_de_passe', 'role', 'actif'[m
+[32m+[m[32m        'nom',[m
+[32m+[m[32m        'prenom',[m
+[32m+[m[32m        'email',[m
+[32m+[m[32m        'mot_de_passe',[m
+[32m+[m[32m        'role',[m
+[32m+[m[32m        'actif',[m
+     ];[m
+ [m
+[31m-    protected $hidden = ['mot_de_passe'];[m
+[31m-[m
+[31m-    // Map 'mot_de_passe' to Laravel's internal password system[m
+     public function getAuthPassword()[m
+     {[m
+         return $this->mot_de_passe;[m
+[1mdiff --git a/pfe-app/database/migrations/0001_01_01_000000_create_users_table.php b/pfe-app/database/migrations/0001_01_01_000000_create_users_table.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..05fb5d9[m
+[1m--- /dev/null[m
+[1m+++ b/pfe-app/database/migrations/0001_01_01_000000_create_users_table.php[m
+[36m@@ -0,0 +1,49 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32muse Illuminate\Database\Migrations\Migration;[m
+[32m+[m[32muse Illuminate\Database\Schema\Blueprint;[m
+[32m+[m[32muse Illuminate\Support\Facades\Schema;[m
+[32m+[m
+[32m+[m[32mreturn new class extends Migration[m
+[32m+[m[32m{[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Run the migrations.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function up(): void[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Schema::create('users', function (Blueprint $table) {[m
+[32m+[m[32m            $table->id();[m
+[32m+[m[32m            $table->string('name');[m
+[32m+[m[32m            $table->string('email')->unique();[m
+[32m+[m[32m            $table->timestamp('email_verified_at')->nullable();[m
+[32m+[m[32m            $table->string('password');[m
+[32m+[m[32m            $table->rememberToken();[m
+[32m+[m[32m            $table->timestamps();[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        Schema::create('password_reset_tokens', function (Blueprint $table) {[m
+[32m+[m[32m            $table->string('email')->primary();[m
+[32m+[m[32m            $table->string('token');[m
+[32m+[m[32m            $table->timestamp('created_at')->nullable();[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        Schema::create('sessions', function (Blueprint $table) {[m
+[32m+[m[32m            $table->string('id')->primary();[m
+[32m+[m[32m            $table->foreignId('user_id')->nullable()->index();[m
+[32m+[m[32m            $table->string('ip_address', 45)->nullable();[m
+[32m+[m[32m            $table->text('user_agent')->nullable();[m
+[32m+[m[32m            $table->longText('payload');[m
+[32m+[m[32m            $table->integer('last_activity')->index();[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Reverse the migrations.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function down(): void[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Schema::dropIfExists('users');[m
+[32m+[m[32m        Schema::dropIfExists('password_reset_tokens');[m
+[32m+[m[32m        Schema::dropIfExists('sessions');[m
+[32m+[m[32m    }[m
+[32m+[m[32m};[m
+[1mdiff --git a/pfe-app/database/migrations/0001_01_01_000001_create_cache_table.php b/pfe-app/database/migrations/0001_01_01_000001_create_cache_table.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ed758bd[m
+[1m--- /dev/null[m
+[1m+++ b/pfe-app/database/migrations/0001_01_01_000001_create_cache_table.php[m
+[36m@@ -0,0 +1,35 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32muse Illuminate\Database\Migrations\Migration;[m
+[32m+[m[32muse Illuminate\Database\Schema\Blueprint;[m
+[32m+[m[32muse Illuminate\Support\Facades\Schema;[m
+[32m+[m
+[32m+[m[32mreturn new class extends Migration[m
+[32m+[m[32m{[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Run the migrations.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function up(): void[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Schema::create('cache', function (Blueprint $table) {[m
+[32m+[m[32m            $table->string('key')->primary();[m
+[32m+[m[32m            $table->mediumText('value');[m
+[32m+[m[32m            $table->integer('expiration')->index();[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        Schema::create('cache_locks', function (Blueprint $table) {[m
+[32m+[m[32m            $table->string('key')->primary();[m
+[32m+[m[32m            $table->string('owner');[m
+[32m+[m[32m            $table->integer('expiration')->index();[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Reverse the migrations.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function down(): void[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Schema::dropIfExists('cache');[m
+[32m+[m[32m        Schema::dropIfExists('cache_locks');[m
+[32m+[m[32m    }[m
+[32m+[m[32m};[m
+[1mdiff --git a/pfe-app/database/migrations/0001_01_01_000001_pfe_app_tables.php b/pfe-app/database/migrations/0001_01_01_000001_pfe_app_tables.php[m
+[1mdeleted file mode 100644[m
+[1mindex b5b5882..0000000[m
+[1m--- a/pfe-app/database/migrations/0001_01_01_000001_pfe_app_tables.php[m
+[1m+++ /dev/null[m
+[36m@@ -1,204 +0,0 @@[m
+[31m-<?php[m
+[31m-use Illuminate\Database\Migrations\Migration;[m
+[31m-use Illuminate\Database\Schema\Blueprint;[m
+[31m-use Illuminate\Support\Facades\Schema;[m
+[31m-[m
+[31m-return new class extends Migration {[m
+[31m-    public function up(): void {[m
+[31m-        Schema::create('utilisateurs', function (Blueprint $table) {[m
+[31m-            $table->id('id_user');[m
+[31m-            $table->string('nom', 40);[m
+[31m-            $table->string('prenom', 40);[m
+[31m-            $table->string('email', 50)->unique();[m
+[31m-            $table->string('mot_de_passe', 255);[m
+[31m-            $table->enum('role', ['ADMIN', 'ENSEIGNANT', 'ETUDIANT']);[m
+[31m-            $table->boolean('actif')->default(true);[m
+[31m-            $table->dateTime('date_creation')->useCurrent();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('enseignants', function (Blueprint $table) {[m
+[31m-            $table->unsignedBigInteger('id_user')->primary();[m
+[31m-            $table->string('specialite', 100);[m
+[31m-            $table->string('departement', 100);[m
+[31m-            $table->boolean('is_chef')->default(false);[m
+[31m-[m
+[31m-            $table->foreign('id_user')[m
+[31m-                  ->references('id_user')->on('utilisateurs')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('filieres', function (Blueprint $table) {[m
+[31m-            $table->id('id_filiere');[m
+[31m-            $table->string('nom_filiere', 100)->unique();[m
+[31m-            $table->text('description')->nullable();[m
+[31m-            $table->unsignedBigInteger('responsable_id');[m
+[31m-[m
+[31m-            $table->foreign('responsable_id')[m
+[31m-                  ->references('id_user')->on('enseignants')[m
+[31m-                  ->restrictOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('annees_academiques', function (Blueprint $table) {[m
+[31m-            $table->id('id_annee');[m
+[31m-            $table->string('libelle', 20);  [m
+[31m-            $table->unsignedBigInteger('id_filiere');[m
+[31m-[m
+[31m-            $table->foreign('id_filiere')[m
+[31m-                  ->references('id_filiere')->on('filieres')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('semestres', function (Blueprint $table) {[m
+[31m-            $table->id('id_semestre');[m
+[31m-            $table->unsignedTinyInteger('numero');[m
+[31m-            $table->boolean('cloture')->default(false);[m
+[31m-            $table->unsignedBigInteger('id_annee');[m
+[31m-[m
+[31m-            $table->foreign('id_annee')[m
+[31m-                  ->references('id_annee')->on('annees_academiques')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-        DB::statement('ALTER TABLE semestres ADD CONSTRAINT chk_numero CHECK (numero IN (1,2))');[m
+[31m-[m
+[31m-        Schema::create('modules', function (Blueprint $table) {[m
+[31m-            $table->id('id_module');[m
+[31m-            $table->string('code_module', 20)->unique();[m
+[31m-            $table->string('nom_module', 100);[m
+[31m-            $table->unsignedBigInteger('id_semestre');[m
+[31m-[m
+[31m-            $table->foreign('id_semestre')[m
+[31m-                  ->references('id_semestre')->on('semestres')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('enseignements', function (Blueprint $table) {[m
+[31m-            $table->id('id_enseignement');[m
+[31m-            $table->unsignedBigInteger('id_user');[m
+[31m-            $table->unsignedBigInteger('id_module');[m
+[31m-[m
+[31m-            $table->unique(['id_user', 'id_module']);[m
+[31m-[m
+[31m-            $table->foreign('id_user')[m
+[31m-                  ->references('id_user')->on('enseignants')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-[m
+[31m-            $table->foreign('id_module')[m
+[31m-                  ->references('id_module')->on('modules')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('etudiants', function (Blueprint $table) {[m
+[31m-            $table->unsignedBigInteger('id_user')->primary();[m
+[31m-            $table->string('cne', 20)->unique();[m
+[31m-            $table->unsignedBigInteger('id_filiere');[m
+[31m-            $table->integer('annee_actuelle');[m
+[31m-[m
+[31m-            $table->foreign('id_user')[m
+[31m-                  ->references('id_user')->on('utilisateurs')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-[m
+[31m-            $table->foreign('id_filiere')[m
+[31m-                  ->references('id_filiere')->on('filieres')[m
+[31m-                  ->restrictOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('inscriptions', function (Blueprint $table) {[m
+[31m-            $table->id('id_inscription');[m
+[31m-            $table->unsignedBigInteger('id_user');[m
+[31m-            $table->unsignedBigInteger('id_semestre');[m
+[31m-            $table->dateTime('date_inscription')->useCurrent();[m
+[31m-[m
+[31m-            $table->unique(['id_user', 'id_semestre']);[m
+[31m-[m
+[31m-            $table->foreign('id_user')[m
+[31m-                  ->references('id_user')->on('etudiants')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-[m
+[31m-            $table->foreign('id_semestre')[m
+[31m-                  ->references('id_semestre')->on('semestres')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('evaluations', function (Blueprint $table) {[m
+[31m-            $table->id('id_evaluation');[m
+[31m-            $table->string('libelle', 100);[m
+[31m-            $table->enum('type', ['CC', 'TP', 'EXAM']);[m
+[31m-            $table->date('date_evaluation');[m
+[31m-            $table->unsignedBigInteger('id_module');[m
+[31m-[m
+[31m-            $table->foreign('id_module')[m
+[31m-                  ->references('id_module')->on('modules')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('notes', function (Blueprint $table) {[m
+[31m-            $table->id('id_note');[m
+[31m-            $table->decimal('note', 5, 2)->nullable();[m
+[31m-            $table->decimal('rattrapage', 5, 2)->nullable();[m
+[31m-            $table->decimal('note_finale', 5, 2)->nullable();[m
+[31m-            $table->unsignedBigInteger('id_user');[m
+[31m-            $table->unsignedBigInteger('id_evaluation');[m
+[31m-[m
+[31m-            $table->unique(['id_user', 'id_evaluation']);[m
+[31m-[m
+[31m-            $table->foreign('id_user')[m
+[31m-                  ->references('id_user')->on('etudiants')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-[m
+[31m-            $table->foreign('id_evaluation')[m
+[31m-                  ->references('id_evaluation')->on('evaluations')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-        Schema::create('reclamations', function (Blueprint $table) {[m
+[31m-            $table->id('id_reclamation');[m
+[31m-            $table->text('message');[m
+[31m-            $table->dateTime('date_reclamation')->useCurrent();[m
+[31m-            $table->enum('statut', ['EN_ATTENTE', 'TRAITEE', 'REJETEE'])->default('EN_ATTENTE');[m
+[31m-            $table->unsignedBigInteger('id_note');[m
+[31m-            $table->unsignedBigInteger('id_user');[m
+[31m-[m
+[31m-            $table->foreign('id_note')[m
+[31m-                  ->references('id_note')->on('notes')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-[m
+[31m-            $table->foreign('id_user')[m
+[31m-                  ->references('id_user')->on('etudiants')[m
+[31m-                  ->cascadeOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-        Schema::create('log_actions', function (Blueprint $table) {[m
+[31m-            $table->id('id_log');[m
+[31m-            $table->string('action', 100);[m
+[31m-            $table->string('table_concernee', 50);[m
+[31m-            $table->integer('id_enregistrement')->nullable();[m
+[31m-            $table->dateTime('date_action')->useCurrent();[m
+[31m-            $table->unsignedBigInteger('id_user')->nullable();[m
+[31m-[m
+[31m-            $table->foreign('id_user')[m
+[31m-                  ->references('id_user')->on('utilisateurs')[m
+[31m-                  ->nullOnDelete();[m
+[31m-        });[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-    }[m
+[31m-[m
+[31m-    public function down(): void {[m
+[31m-        Schema::dropIfExists('utilisateurs');[m
+[31m-        Schema::dropIfExists('enseignants');[m
+[31m-        Schema::dropIfExists('filieres');[m
+[31m-        Schema::dropIfExists('annees_academiques');[m
+[31m-        Schema::dropIfExists('semestres');[m
+[31m-        Schema::dropIfExists('modules');[m
+[31m-        Schema::dropIfExists('enseignements');[m
+[31m-        Schema::dropIfExists('etudiants');[m
+[31m-        Schema::dropIfExists('inscriptions');[m
+[31m-        Schema::dropIfExists('evaluations');[m
+[31m-        Schema::dropIfExists('notes');[m
+[31m-        Schema::dropIfExists('reclamations');[m
+[31m-        Schema::dropIfExists('log_actions');[m
+[31m-[m
+[31m-    }[m
+[31m-};[m
+\ No newline at end of file[m
+[1mdiff --git a/pfe-app/database/migrations/0001_01_01_000002_create_jobs_table.php b/pfe-app/database/migrations/0001_01_01_000002_create_jobs_table.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..425e705[m
+[1m--- /dev/null[m
+[1m+++ b/pfe-app/database/migrations/0001_01_01_000002_create_jobs_table.php[m
+[36m@@ -0,0 +1,57 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32muse Illuminate\Database\Migrations\Migration;[m
+[32m+[m[32muse Illuminate\Database\Schema\Blueprint;[m
+[32m+[m[32muse Illuminate\Support\Facades\Schema;[m
+[32m+[m
+[32m+[m[32mreturn new class extends Migration[m
+[32m+[m[32m{[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Run the migrations.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function up(): void[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Schema::create('jobs', function (Blueprint $table) {[m
+[32m+[m[32m            $table->id();[m
+[32m+[m[32m            $table->string('queue')->index();[m
+[32m+[m[32m            $table->longText('payload');[m
+[32m+[m[32m            $table->unsignedTinyInteger('attempts');[m
+[32m+[m[32m            $table->unsignedInteger('reserved_at')->nullable();[m
+[32m+[m[32m            $table->unsignedInteger('available_at');[m
+[32m+[m[32m            $table->unsignedInteger('created_at');[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        Schema::create('job_batches', function (Blueprint $table) {[m
+[32m+[m[32m            $table->string('id')->primary();[m
+[32m+[m[32m            $table->string('name');[m
+[32m+[m[32m            $table->integer('total_jobs');[m
+[32m+[m[32m            $table->integer('pending_jobs');[m
+[32m+[m[32m            $table->integer('failed_jobs');[m
+[32m+[m[32m            $table->longText('failed_job_ids');[m
+[32m+[m[32m            $table->mediumText('options')->nullable();[m
+[32m+[m[32m            $table->integer('cancelled_at')->nullable();[m
+[32m+[m[32m            $table->integer('created_at');[m
+[32m+[m[32m            $table->integer('finished_at')->nullable();[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        Schema::create('failed_jobs', function (Blueprint $table) {[m
+[32m+[m[32m            $table->id();[m
+[32m+[m[32m            $table->string('uuid')->unique();[m
+[32m+[m[32m            $table->text('connection');[m
+[32m+[m[32m            $table->text('queue');[m
+[32m+[m[32m            $table->longText('payload');[m
+[32m+[m[32m            $table->longText('exception');[m
+[32m+[m[32m            $table->timestamp('failed_at')->useCurrent();[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Reverse the migrations.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function down(): void[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Schema::dropIfExists('jobs');[m
+[32m+[m[32m        Schema::dropIfExists('job_batches');[m
+[32m+[m[32m        Schema::dropIfExists('failed_jobs');[m
+[32m+[m[32m    }[m
+[32m+[m[32m};[m
+[1mdiff --git a/pfe-app/resources/views/auth/register.blade.php b/pfe-app/resources/views/auth/register.blade.php[m
+[1mindex 8bffe2b..db3c4ee 100644[m
+[1m--- a/pfe-app/resources/views/auth/register.blade.php[m
+[1m+++ b/pfe-app/resources/views/auth/register.blade.php[m
+[36m@@ -14,18 +14,23 @@[m
+             <x-text-input id="prenom" class="block mt-1 w-full" type="text" name="prenom" :value="old('prenom')" required autofocus autocomplete="prenom" />[m
+             <x-input-error :messages="$errors->get('prenom')" class="mt-2" />[m
+         </div>[m
+[31m-        <!-- Username -->[m
+[31m-        <div>[m
+[31m-            <x-input-label for="username" :value="__('Username')" />[m
+[31m-            <x-text-input id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')" required autofocus autocomplete="username" />[m
+[31m-            <x-input-error :messages="$errors->get('username')" class="mt-2" />[m
+[31m-        </div>[m
+         <!-- Email Address -->[m
+         <div class="mt-4">[m
+             <x-input-label for="email" :value="__('Email')" />[m
+             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />[m
+             <x-input-error :messages="$errors->get('email')" class="mt-2" />[m
+         </div>[m
+[32m+[m[32m        <!-- Role -->[m
+[32m+[m[32m        <div class="mt-4">[m
+[32m+[m[32m            <x-input-label for="role" :value="__('Rôle')" />[m
+[32m+[m[32m            <select id="role" name="role" required[m
+[32m+[m[32m                class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">[m
+[32m+[m[32m                <option value="" disabled selected>-- Choisir un rôle --</option>[m
+[32m+[m[32m                <option value="ETUDIANT"   {{ old('role') == 'ETUDIANT'   ? 'selected' : '' }}>Étudiant</option>[m
+[32m+[m[32m                <option value="ENSEIGNANT" {{ old('role') == 'ENSEIGNANT' ? 'selected' : '' }}>Enseignant</option>[m
+[32m+[m[32m            </select>[m
+[32m+[m[32m            <x-input-error :messages="$errors->get('role')" class="mt-2" />[m
+[32m+[m[32m        </div>[m
+ [m
+         <!-- Password -->[m
+         <div class="mt-4">[m
+[1mdiff --git a/pfe-app/resources/views/etudiant/dashboard.blade.php b/pfe-app/resources/views/etudiant/dashboard.blade.php[m
+[1mindex ebac2f1..6c6c547 100644[m
+[1m--- a/pfe-app/resources/views/etudiant/dashboard.blade.php[m
+[1m+++ b/pfe-app/resources/views/etudiant/dashboard.blade.php[m
+[36m@@ -1,18 +1,136 @@[m
+ <x-app-layout>[m
+     <x-slot name="header">[m
+         <h2 class="font-semibold text-xl text-gray-800 leading-tight">[m
+[31m-            {{ __('Espace Étudiant') }}[m
+[32m+[m[32m            Mes Notes[m
+         </h2>[m
+     </x-slot>[m
+ [m
+[31m-    <div class="py-12">[m
+[31m-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">[m
+[31m-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">[m
+[31m-                <div class="p-6 text-gray-900">[m
+[31m-                    <h3 class="text-lg font-bold mb-4">Mes Résultats</h3>[m
+[31m-                    <p>Bienvenue {{ Auth::user()->prenom }}. Consultez vos notes et votre progression académique pour l'année en cours.</p>[m
+[32m+[m[32m    <div class="py-10">[m
+[32m+[m[32m        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">[m
+[32m+[m[32m            @if(session('success'))[m
+[32m+[m[32m                <div class="bg-green-100 border border-green-300 text-green-800 rounded-lg px-4 py-3 text-sm">[m
+[32m+[m[32m                    ✓ {{ session('success') }}[m
+                 </div>[m
+[32m+[m[32m            @endif[m
+[32m+[m[32m            @if(session('error'))[m
+[32m+[m[32m                <div class="bg-red-100 border border-red-300 text-red-800 rounded-lg px-4 py-3 text-sm">[m
+[32m+[m[32m                    ✗ {{ session('error') }}[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m            @endif[m
+[32m+[m
+[32m+[m[32m            <div class="bg-white shadow-sm rounded-xl overflow-hidden">[m
+[32m+[m[32m                <div class="px-6 py-4 border-b border-gray-100">[m
+[32m+[m[32m                    <h3 class="font-semibold text-gray-800">Résultats de {{ Auth::user()->prenom }} {{ Auth::user()->nom }}</h3>[m
+[32m+[m[32m                </div>[m
+[32m+[m
+[32m+[m[32m                <div class="overflow-x-auto">[m
+[32m+[m[32m                    <table class="w-full text-sm text-left">[m
+[32m+[m[32m                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">[m
+[32m+[m[32m                            <tr>[m
+[32m+[m[32m                                <th class="px-6 py-3">Module</th>[m
+[32m+[m[32m                                <th class="px-6 py-3">Évaluation</th>[m
+[32m+[m[32m                                <th class="px-6 py-3">Type</th>[m
+[32m+[m[32m                                <th class="px-6 py-3 text-center">Note</th>[m
+[32m+[m[32m                                <th class="px-6 py-3 text-center">Rattrapage</th>[m
+[32m+[m[32m                                <th class="px-6 py-3 text-center">Note Finale</th>[m
+[32m+[m[32m                                <th class="px-6 py-3 text-center">Action</th>[m
+[32m+[m[32m                            </tr>[m
+[32m+[m[32m                        </thead>[m
+[32m+[m[32m                        <tbody class="divide-y divide-gray-100">[m
+[32m+[m[32m                            @forelse($notes as $row)[m
+[32m+[m[32m                            <tr class="hover:bg-gray-50">[m
+[32m+[m[32m                                <td class="px-6 py-4 font-medium text-gray-800">{{ $row->nom_module }}</td>[m
+[32m+[m[32m                                <td class="px-6 py-4 text-gray-600">{{ $row->libelle }}</td>[m
+[32m+[m[32m                                <td class="px-6 py-4">[m
+[32m+[m[32m                                    <span class="px-2 py-1 rounded-full text-xs font-semibold[m
+[32m+[m[32m                                        @if($row->type === 'CC') bg-indigo-100 text-indigo-700[m
+[32m+[m[32m                                        @elseif($row->type === 'TP') bg-green-100 text-green-700[m
+[32m+[m[32m                                        @else bg-orange-100 text-orange-700 @endif">[m
+[32m+[m[32m                                        {{ $row->type }}[m
+[32m+[m[32m                                    </span>[m
+[32m+[m[32m                                </td>[m
+[32m+[m[32m                                <td class="px-6 py-4 text-center font-mono">[m
+[32m+[m[32m                                    {{ $row->note !== null ? number_format($row->note, 2) : '—' }}[m
+[32m+[m[32m                                </td>[m
+[32m+[m[32m                                <td class="px-6 py-4 text-center font-mono">[m
+[32m+[m[32m                                    {{ $row->rattrapage !== null ? number_format($row->rattrapage, 2) : '—' }}[m
+[32m+[m[32m                                </td>[m
+[32m+[m[32m                                <td class="px-6 py-4 text-center font-mono font-semibold[m
+[32m+[m[32m                                    @if($row->note_finale === null) text-gray-400[m
+[32m+[m[32m                                    @elseif($row->note_finale >= 12) text-green-600[m
+[32m+[m[32m                                    @elseif($row->note_finale >= 10) text-amber-600[m
+[32m+[m[32m                                    @else text-red-600 @endif">[m
+[32m+[m[32m                                    {{ $row->note_finale !== null ? number_format($row->note_finale, 2).'/20' : '—' }}[m
+[32m+[m[32m                                </td>[m
+[32m+[m[32m                                <td class="px-6 py-4 text-center">[m
+[32m+[m[32m                                    @if($row->id_note && !$row->has_reclamation)[m
+[32m+[m[32m                                        <button onclick="openModal({{ $row->id_note }}, '{{ addslashes($row->nom_module) }} — {{ addslashes($row->libelle) }}')"[m
+[32m+[m[32m                                            class="px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition">[m
+[32m+[m[32m                                            Signaler[m
+[32m+[m[32m                                        </button>[m
+[32m+[m[32m                                    @elseif($row->has_reclamation)[m
+[32m+[m[32m                                        <span class="text-xs text-amber-600 font-medium">En attente</span>[m
+[32m+[m[32m                                    @else[m
+[32m+[m[32m                                        <span class="text-gray-300 text-xs">—</span>[m
+[32m+[m[32m                                    @endif[m
+[32m+[m[32m                                </td>[m
+[32m+[m[32m                            </tr>[m
+[32m+[m[32m                            @empty[m
+[32m+[m[32m                            <tr>[m
+[32m+[m[32m                                <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">[m
+[32m+[m[32m                                    Aucune note disponible pour le moment.[m
+[32m+[m[32m                                </td>[m
+[32m+[m[32m                            </tr>[m
+[32m+[m[32m                            @endforelse[m
+[32m+[m[32m                        </tbody>[m
+[32m+[m[32m                    </table>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m            </div>[m
+[32m+[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m
+[32m+[m[32m    <div id="modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50" onclick="closeModalIfOverlay(event)">[m
+[32m+[m[32m        <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">[m
+[32m+[m[32m            <div class="flex justify-between items-start mb-4">[m
+[32m+[m[32m                <div>[m
+[32m+[m[32m                    <h4 class="font-bold text-gray-900">Signaler une erreur</h4>[m
+[32m+[m[32m                    <p id="modal-label" class="text-sm text-gray-500 mt-0.5"></p>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-lg leading-none">&times;</button>[m
+             </div>[m
+[32m+[m
+[32m+[m[32m            <form method="POST" action="{{ route('etudiant.reclamation.store') }}">[m
+[32m+[m[32m                @csrf[m
+[32m+[m[32m                <input type="hidden" name="id_note" id="modal-id-note">[m
+[32m+[m[32m                <textarea name="message" rows="4" required placeholder="Décrivez l'erreur constatée..."[m
+[32m+[m[32m                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"></textarea>[m
+[32m+[m[32m                <div class="flex gap-2 justify-end mt-4">[m
+[32m+[m[32m                    <button type="button" onclick="closeModal()"[m
+[32m+[m[32m                        class="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition">[m
+[32m+[m[32m                        Annuler[m
+[32m+[m[32m                    </button>[m
+[32m+[m[32m                    <button type="submit"[m
+[32m+[m[32m                        class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">[m
+[32m+[m[32m                        Envoyer[m
+[32m+[m[32m                    </button>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m            </form>[m
+         </div>[m
+     </div>[m
+[32m+[m
+[32m+[m[32m    <script>[m
+[32m+[m[32m        function openModal(idNote, label) {[m
+[32m+[m[32m            document.getElementById('modal-id-note').value = idNote;[m
+[32m+[m[32m            document.getElementById('modal-label').textContent = label;[m
+[32m+[m[32m            document.getElementById('modal').classList.replace('hidden', 'flex');[m
+[32m+[m[32m        }[m
+[32m+[m[32m        function closeModal() {[m
+[32m+[m[32m            document.getElementById('modal').classList.replace('flex', 'hidden');[m
+[32m+[m[32m        }[m
+[32m+[m[32m        function closeModalIfOverlay(e) {[m
+[32m+[m[32m            if (e.target === document.getElementById('modal')) closeModal();[m
+[32m+[m[32m        }[m
+[32m+[m[32m        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });[m
+[32m+[m[32m    </script>[m
+ </x-app-layout>[m
+\ No newline at end of file[m
+[1mdiff --git a/pfe-app/resources/views/welcome.blade.php b/pfe-app/resources/views/welcome.blade.php[m
+[1mindex 56f4b4f..68351e3 100644[m
+[1m--- a/pfe-app/resources/views/welcome.blade.php[m
+[1m+++ b/pfe-app/resources/views/welcome.blade.php[m
+[36m@@ -20,15 +20,20 @@[m
+                     <h1 class="text-3xl font-bold text-red-600">PFE <span class="text-gray-800">ESTO</span></h1>[m
+                 </div>[m
+                 [m
+[31m-                <nav class="-mx-3 flex flex-1 justify-end">[m
+[32m+[m[32m                <nav class="-mx-3 flex flex-1 justify-end gap-2">[m
+                     @auth[m
+                         <a href="{{ url('/dashboard') }}" class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]">[m
+                             Dashboard[m
+                         </a>[m
+                     @else[m
+[31m-                        <a href="{{ route('login') }}" class="rounded-md px-4 py-2 bg-red-600 text-white font-semibold shadow-sm hover:bg-red-500 transition focus:outline-none">[m
+[32m+[m[32m                        <a href="{{ route('login') }}" class="rounded-md px-4 py-2 border border-red-600 text-red-600 font-semibold shadow-sm hover:bg-red-50 transition focus:outline-none">[m
+                             Connexion[m
+                         </a>[m
+[32m+[m[32m                        @if (Route::has('register'))[m
+[32m+[m[32m                            <a href="{{ route('register') }}" class="rounded-md px-4 py-2 bg-red-600 text-white font-semibold shadow-sm hover:bg-red-500 transition focus:outline-none">[m
+[32m+[m[32m                                S'inscrire[m
+[32m+[m[32m                            </a>[m
+[32m+[m[32m                        @endif[m
+                     @endauth[m
+                 </nav>[m
+             </header>[m
+[1mdiff --git a/pfe-app/routes/web.php b/pfe-app/routes/web.php[m
+[1mindex 483177c..e5467f4 100644[m
+[1m--- a/pfe-app/routes/web.php[m
+[1m+++ b/pfe-app/routes/web.php[m
+[36m@@ -1,35 +1,54 @@[m
+ <?php[m
+[31m-[m
+[31m-use App\Http\Controllers\ProfileController;[m
+[31m-use Illuminate\Support\Facades\Route;[m
+[31m-[m
+[31m-Route::get('/', function () {[m
+[31m-    return view('welcome');[m
+[31m-});[m
+[31m-[m
+[31m-// We keep this for now, but your Controller will likely send users to the specific ones below[m
+[31m-Route::get('/dashboard', function () {[m
+[31m-    return view('dashboard');[m
+[31m-})->middleware(['auth', 'verified'])->name('dashboard');[m
+[31m-[m
+[31m-Route::middleware('auth')->group(function () {[m
+[31m-    // Your 3 Role-Specific Routes[m
+[31m-    Route::get('/admin/dashboard', function () {[m
+[31m-        return view('admin.dashboard'); // Points to resources/views/admin/dashboard.blade.php[m
+[31m-    })->name('admin.dashboard');[m
+[31m-[m
+[31m-    Route::get('/enseignant/dashboard', function () {[m
+[31m-        return view('enseignant.dashboard'); [m
+[31m-    })->name('enseignant.dashboard');[m
+[31m-[m
+[31m-    Route::get('/etudiant/dashboard', function () {[m
+[31m-        return view('etudiant.dashboard');[m
+[31m-    })->name('etudiant.dashboard');[m
+[31m-[m
+[31m-    // Profile Routes[m
+[31m-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');[m
+[31m-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');[m
+[31m-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');[m
+[31m-});[m
+[32m+[m[32m    use App\Http\Controllers\ProfileController;[m
+[32m+[m[32m    use App\Http\Controllers\EtudiantController;  // ← add this[m
+[32m+[m[32m    use Illuminate\Support\Facades\Route;[m
+[32m+[m[32m    use Illuminate\Support\Facades\Auth;[m
+[32m+[m[41m    [m
+[32m+[m[32m    Route::get('/', function () {[m
+[32m+[m[32m        return view('welcome');[m
+[32m+[m[32m    });[m
+[32m+[m[41m    [m
+[32m+[m[32m    Route::get('/dashboard', function () {[m
+[32m+[m[32m        return view('dashboard');[m
+[32m+[m[32m    })->middleware(['auth', 'verified'])->name('dashboard');[m
+[32m+[m[41m    [m
+[32m+[m[32m    Route::middleware('auth')->group(function () {[m
+[32m+[m[41m    [m
+[32m+[m[32m        Route::get('/admin/dashboard', function () {[m
+[32m+[m[32m            return view('admin.dashboard');[m
+[32m+[m[32m        })->name('admin.dashboard');[m
+[32m+[m[41m    [m
+[32m+[m[32m        Route::get('/enseignant/dashboard', function () {[m
+[32m+[m[32m            return view('enseignant.dashboard');[m
+[32m+[m[32m        })->name('enseignant.dashboard');[m
+[32m+[m[41m    [m
+[32m+[m[32m        Route::get('/etudiant/dashboard', function () {[m
+[32m+[m[32m            $userId = Auth::user()->id_user;[m
+[32m+[m[32m            $notes = \DB::table('Note')[m
+[32m+[m[32m                ->join('Evaluation', 'Note.id_evaluation', '=', 'Evaluation.id_evaluation')[m
+[32m+[m[32m                ->join('Module',     'Evaluation.id_module', '=', 'Module.id_module')[m
+[32m+[m[32m                ->leftJoin('Reclamation', function ($join) use ($userId) {[m
+[32m+[m[32m                    $join->on('Reclamation.id_note', '=', 'Note.id_note')[m
+[32m+[m[32m                         ->where('Reclamation.id_user', '=', $userId)[m
+[32m+[m[32m                         ->where('Reclamation.statut', '=', 'EN_ATTENTE');[m
+[32m+[m[32m                })[m
+[32m+[m[32m                ->where('Note.id_user', $userId)[m
+[32m+[m[32m                ->select([m
+[32m+[m[32m                    'Note.id_note', 'Note.note', 'Note.rattrapage', 'Note.note_finale',[m
+[32m+[m[32m                    'Evaluation.libelle', 'Evaluation.type', 'Module.nom_module',[m
+[32m+[m[32m                    \DB::raw('COUNT(Reclamation.id_reclamation) > 0 as has_reclamation')[m
+[32m+[m[32m                )[m
+[32m+[m[32m                ->groupBy([m
+[32m+[m[32m                    'Note.id_note', 'Note.note', 'Note.rattrapage', 'Note.note_finale',[m
+[32m+[m[32m                    'Evaluation.libelle', 'Evaluation.type', 'Module.nom_module'[m
+[32m+[m[32m                )[m
+[32m+[m[32m                ->get();[m
+[32m+[m[32m            return view('etudiant.dashboard', compact('notes'));[m
+[32m+[m[32m        })->name('etudiant.dashboard');[m
+[32m+[m[41m    [m
+[32m+[m[32m        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');[m
+[32m+[m[32m        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');[m
+[32m+[m[32m        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');[m
+[32m+[m[32m    });[m
+ [m
+ require __DIR__.'/auth.php';[m
+\ No newline at end of file[m

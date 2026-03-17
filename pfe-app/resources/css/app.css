@@ -282,6 +282,23 @@ body {
     text-align: left;
 }
 
+.nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    padding: 4px 12px 2px;
+    margin-top: 4px;
+    opacity: 0.6;
+}
+
+.nav-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 12px;
+}
+
 /* User context menu */
 #user-menu {
     display: none;

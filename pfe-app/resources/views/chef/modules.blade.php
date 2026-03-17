@@ -86,8 +86,8 @@
                                 <tr>
                                     <td style="font-weight:500;">{{ $m->nom_module }}</td>
                                     <td><span class="code-badge">{{ $m->code_module }}</span></td>
-                                    <td style="font-size:12px;color:var(--text-secondary);">{{ $m->nom_filiere }}</td>
-                                    <td style="font-size:12px;color:var(--text-secondary);">S{{ $m->semestre_numero }} —
+                                    <td>{{ $m->nom_filiere }}</td>
+                                    <td>S{{ $m->semestre_numero }} —
                                         {{ $m->annee }}</td>
                                     <td style="font-size:13px;">{{ $m->prof_prenom }} {{ $m->prof_nom }}</td>
                                     <td>
