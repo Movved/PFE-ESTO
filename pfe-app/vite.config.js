@@ -10,6 +10,8 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/sidebar.css',
                 'resources/js/sidebar.js',
+                'resources/js/topbar.js',
+                'resources/css/topbar.css'
             ],
             refresh: true,
         }),
