@@ -2,22 +2,18 @@
 <html lang="fr">
 
 <head>
-    <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');</script>
+    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saisie — {{ $module->nom_module }}</title>
-    @vite(['resources/css/app.css', 'resources/css/enseignant/dashboard.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/enseignant/dashboard.css', 'resources/js/app.js', 'resources/css/sidebar.css', 'resources/js/sidebar.js'])
 </head>
 
 <body>
     {{-- SIDEBAR --}}
     @include('layouts.sidebar-enseignant')
     <div class="main">
-        <header class="topbar">
-            <span class="topbar-title">{{ $module->nom_module }} — Saisie</span>
-            <button class="toggle-btn" id="theme-toggle" onclick="toggleTheme()"><span
-                    class="toggle-knob"></span></button>
-        </header>
+    @include('layouts.topbar', ['title' => $module->nom_module])
         <main class="content">
             @if(session('success'))
                 <div class="alert alert-success"><svg viewBox="0 0 24 24">

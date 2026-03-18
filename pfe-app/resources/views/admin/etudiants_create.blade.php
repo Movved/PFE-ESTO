@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <script>if (localStorage.getItem('theme') === 'dark') { document.documentElement.classList.add('dark'); }</script>
+    @include('partials.theme-init')
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — Ajouter Étudiant</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/sidebar.css', 'resources/js/sidebar.js'])
     <style>
         .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
         .page-title { font-size:20px; font-weight:600; color:var(--text-primary); }

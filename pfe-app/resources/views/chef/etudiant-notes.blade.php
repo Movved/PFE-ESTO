@@ -2,11 +2,11 @@
 <html lang="fr">
 
 <head>
-    <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');</script>
+    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes de l'étudiant</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js','resources/css/sidebar.css', 'resources/js/sidebar.js'])
     <style>
         .card {
             background: var(--surface);
@@ -251,14 +251,7 @@
     {{-- SIDEBAR --}}
     @include('layouts.sidebar-chef')
     <div class="main">
-        <header class="topbar">
-            <span class="topbar-title">Notes de l'étudiant</span>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-                <span id="topbar-time"
-                    style="font-size:14px;font-weight:600;color:var(--text-primary);font-family:'SF Mono','Fira Code',monospace;"></span>
-                <span id="topbar-date" style="font-size:11px;color:var(--text-secondary);"></span>
-            </div>
-        </header>
+        @include('layouts.topbar', ['title' => 'Dashboard'])
 
         <main class="content">
 

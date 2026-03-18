@@ -2,15 +2,11 @@
 <html lang="fr">
 
 <head>
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réclamations</title>
-    @vite(['resources/css/app.css', 'resources/css/enseignant/dashboard.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/enseignant/dashboard.css', 'resources/js/app.js', 'resources/css/sidebar.css', 'resources/js/sidebar.js'])
     <style>
         /* Modal styles in case they're not in your CSS */
         .modal-overlay {
@@ -200,13 +196,7 @@
     @include('layouts.sidebar-enseignant')
 
     <div class="main">
-        <header class="topbar">
-            <span class="topbar-title">Réclamations des étudiants</span>
-            <button class="toggle-btn" id="theme-toggle">
-                <span class="toggle-knob"></span>
-            </button>
-
-        </header>
+    @include('layouts.topbar', ['title' => 'Réclamations'])
 
         <main class="content">
             @if(session('success'))

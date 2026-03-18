@@ -2,15 +2,11 @@
 <html lang="fr">
 
 <head>
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes Modules</title>
-    @vite(['resources/css/app.css', 'resources/css/enseignant/dashboard.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/enseignant/dashboard.css', 'resources/js/app.js', 'resources/css/sidebar.css', 'resources/js/sidebar.js'])
 </head>
 
 <body>
@@ -19,12 +15,7 @@
     @include('layouts.sidebar-enseignant')
 
     <div class="main">
-        <header class="topbar">
-            <span class="topbar-title">Mes Modules</span>
-
-            <button class="toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Thème sombre"><span
-                    class="toggle-knob"></span></button>
-        </header>
+    @include('layouts.topbar', ['title' => 'Module'])
 
         <main class="content">
             @if(session('success'))
