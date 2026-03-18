@@ -8,6 +8,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/enseignant/dashboard.css',
                 'resources/js/app.js',
+                'resources/css/sidebar.css',
+                'resources/js/sidebar.js',
             ],
             refresh: true,
         }),
