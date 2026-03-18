@@ -1,12 +1,8 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
+import './sidebar.js';
 window.Alpine = Alpine;
 Alpine.start();
-
-window.toggleUserMenu = function () {
-    const menu = document.getElementById('user-menu');
-    if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-}
 
 window.toggleThemeFromMenu = function () {
     const isDark = document.documentElement.classList.toggle('dark');
