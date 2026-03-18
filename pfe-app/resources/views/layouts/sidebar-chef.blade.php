@@ -1,8 +1,4 @@
 {{-- CHEF SIDEBAR --}}
-<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
-<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <aside class="sb" id="sidebar">
 
     <div class="sb-header">
@@ -10,8 +6,15 @@
             <i class="fi fi-sr-graduation-cap"></i>
         </div>
         <span class="sb-logo-text">Gestionnaire</span>
-        <button class="sb-toggle" onclick="toggleSidebar()">
-            <i class="fi fi-rr-menu-burger"></i>
+
+        {{-- Shown when expanded --}}
+        <button class="sb-collapse-btn" onclick="collapseSidebar()" title="Réduire">
+            <i class="fi fi-rr-arrow-small-left"></i>
+        </button>
+
+        {{-- Shown when collapsed, perfectly centred --}}
+        <button class="sb-expand-btn" onclick="expandSidebar()" title="Développer">
+            <i class="fi fi-rr-arrow-small-right"></i>
         </button>
     </div>
 
@@ -37,7 +40,6 @@
         </a>
 
         <div class="sb-divider"></div>
-
         <div class="sb-label">Enseignant</div>
 
         <a href="{{ route('enseignant.dashboard') }}" class="sb-item {{ request()->routeIs('enseignant.dashboard') ? 'active' : '' }}">
@@ -64,16 +66,17 @@
 
     <div class="sb-footer">
         <div class="sb-user">
+
             <div class="sb-user-menu" id="sb-user-menu" onclick="event.stopPropagation()">
-                <a href="{{ route('profile.edit') }}">
+                <a href="{{ route('profile.edit') }}" onclick="closeSbMenu()">
                     <i class="fi fi-rr-user"></i> Profil
                 </a>
-                <button onclick="window.toggleThemeFromMenu && window.toggleThemeFromMenu()">
+                <button onclick="toggleTheme()">
                     <i class="fi fi-rr-moon" id="theme-icon-menu"></i>
                     <span id="theme-label">Mode sombre</span>
                 </button>
                 <hr>
-                <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                <form method="POST" action="{{ route('logout') }}" style="margin:0;">
                     @csrf
                     <button type="submit" class="danger">
                         <i class="fi fi-rr-sign-out-alt"></i> Déconnexion
@@ -88,82 +91,13 @@
                 <div class="sb-user-name">{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
                 <div class="sb-user-role">Chef de département</div>
             </div>
-            <button class="sb-user-more" id="sb-user-btn" onclick="toggleUserMenu(event)">
+            <button class="sb-user-more" onclick="toggleUserMenu(event)">
                 <i class="fi fi-rr-menu-dots-vertical"></i>
             </button>
+
         </div>
     </div>
 
 </aside>
 
 <div class="sb-tooltip" id="sb-tooltip"></div>
-
-<script>
-(function () {
-    const sb      = document.getElementById('sidebar');
-    const tooltip = document.getElementById('sb-tooltip');
-
-    /* ── Restore state without animation on load ── */
-    sb.style.transition = 'none';
-    if (localStorage.getItem('sb_collapsed') === '1') sb.classList.add('collapsed');
-    requestAnimationFrame(() => { sb.style.transition = ''; });
-
-    /* ── Toggle ── */
-    window.toggleSidebar = function () {
-        sb.classList.toggle('collapsed');
-        localStorage.setItem('sb_collapsed', sb.classList.contains('collapsed') ? '1' : '0');
-        /* Hide tooltip immediately on toggle */
-        tooltip.style.opacity = '0';
-    };
-
-    /* ── Tooltips (collapsed only) ── */
-    document.querySelectorAll('.sb-item').forEach(function (item) {
-        const label = item.querySelector('.sb-item-label');
-        if (!label) return;
-        item.addEventListener('mouseenter', function () {
-            if (!sb.classList.contains('collapsed')) return;
-            const r = item.getBoundingClientRect();
-            tooltip.textContent = label.textContent.trim();
-            tooltip.style.top  = (r.top + r.height / 2) + 'px';
-            tooltip.style.left = (r.right + 12) + 'px';
-            tooltip.style.opacity = '1';
-        });
-        item.addEventListener('mouseleave', function () {
-            tooltip.style.opacity = '0';
-        });
-    });
-
-    /* ── User menu ── */
-    window.toggleUserMenu = function (e) {
-        if (e) e.stopPropagation();
-        const userMenu = document.getElementById('sb-user-menu');
-        if (userMenu) userMenu.classList.toggle('open');
-    };
-    document.addEventListener('click', function (e) {
-        const userMenu = document.getElementById('sb-user-menu');
-        const userBtn  = document.getElementById('sb-user-btn');
-        if (userMenu && userMenu.classList.contains('open')) {
-            if (userBtn && userBtn.contains(e.target)) return;
-            if (userMenu.contains(e.target)) return;
-            userMenu.classList.remove('open');
-        }
-    });
-
-    /* ── Theme ── */
-    function updateThemeLabel() {
-        const lbl = document.getElementById('theme-label');
-        const icon = document.getElementById('theme-icon-menu');
-        const isDark = document.documentElement.classList.contains('dark');
-        if (lbl) lbl.textContent = isDark ? 'Mode clair' : 'Mode sombre';
-        if (icon) {
-            icon.className = isDark ? 'fi fi-rr-sun' : 'fi fi-rr-moon';
-        }
-    }
-    updateThemeLabel();
-    window.toggleThemeFromMenu = function () {
-        const dark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-        updateThemeLabel();
-    };
-})();
-</script>

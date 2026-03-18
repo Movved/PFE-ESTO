@@ -1,17 +1,22 @@
+{{-- TOPBAR --}}
 <header class="topbar">
+
     <span class="topbar-title">{{ $title ?? '' }}</span>
+    <div class="topbar-right">
+        @if(isset($search) && $search)
+            <div class="topbar-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
+                </svg>
+                <input type="text" id="search-input" placeholder="{{ $searchPlaceholder ?? 'Rechercher...' }}"
+                    oninput="filterTable()" />
+            </div>
+        @endif
 
-    @if(isset($search) && $search)
-        <div class="topbar-search">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input type="text" placeholder="{{ $searchPlaceholder ?? 'Rechercher...' }}"
-                id="search-input" oninput="filterTable()"
-                style="border:none;background:transparent;font-size:13px;font-family:inherit;color:var(--text-primary);outline:none;width:100%;padding:0;" />
+        <div class="topbar-clock">
+            <span id="topbar-time"></span>
+            <span id="topbar-date"></span>
         </div>
-    @endif
-
-    <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
-        <span id="topbar-time" style="font-size:14px; font-weight:600; color:var(--text-primary); font-family:'SF Mono','Fira Code',monospace;"></span>
-        <span id="topbar-date" style="font-size:11px; color:var(--text-secondary);"></span>
-    </div>
+    </div>      
 </header>

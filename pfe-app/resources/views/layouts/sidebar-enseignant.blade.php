@@ -1,8 +1,4 @@
 {{-- ENSEIGNANT SIDEBAR --}}
-<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
-<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <aside class="sb" id="sidebar">
 
     <div class="sb-header">
@@ -10,20 +6,24 @@
             <i class="fi fi-sr-graduation-cap"></i>
         </div>
         <span class="sb-logo-text">Gestionnaire</span>
-        <button class="sb-toggle" onclick="toggleSidebar()">
-            <i class="fi fi-rr-menu-burger"></i>
+
+        <button class="sb-collapse-btn" onclick="collapseSidebar()" title="Réduire">
+            <i class="fi fi-rr-arrow-small-left"></i>
+        </button>
+        <button class="sb-expand-btn" onclick="expandSidebar()" title="Développer">
+            <i class="fi fi-rr-arrow-small-right"></i>
         </button>
     </div>
 
     <nav class="sb-nav">
 
-        {{-- ── CHEF SECTION (only if user is chef) ── --}}
         @php
             $isChef = DB::table('ENSEIGNANT')
                 ->where('id_user', Auth::user()->id_user)
                 ->where('is_chef', 1)
                 ->exists();
         @endphp
+
         @if($isChef)
             <div class="sb-label">Chef de département</div>
 
@@ -45,10 +45,6 @@
             </a>
 
             <div class="sb-divider"></div>
-        @endif
-
-        {{-- ── ENSEIGNANT SECTION ── --}}
-        @if($isChef)
             <div class="sb-label">Enseignant</div>
         @endif
 
@@ -76,16 +72,17 @@
 
     <div class="sb-footer">
         <div class="sb-user">
+
             <div class="sb-user-menu" id="sb-user-menu" onclick="event.stopPropagation()">
-                <a href="{{ route('profile.edit') }}">
+                <a href="{{ route('profile.edit') }}" onclick="closeSbMenu()">
                     <i class="fi fi-rr-user"></i> Profil
                 </a>
-                <button onclick="window.toggleThemeFromMenu && window.toggleThemeFromMenu()">
+                <button onclick="toggleTheme()">
                     <i class="fi fi-rr-moon" id="theme-icon-menu"></i>
                     <span id="theme-label">Mode sombre</span>
                 </button>
                 <hr>
-                <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                <form method="POST" action="{{ route('logout') }}" style="margin:0;">
                     @csrf
                     <button type="submit" class="danger">
                         <i class="fi fi-rr-sign-out-alt"></i> Déconnexion
@@ -100,9 +97,10 @@
                 <div class="sb-user-name">{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
                 <div class="sb-user-role">{{ $isChef ? 'Chef de département' : 'Enseignant' }}</div>
             </div>
-            <button class="sb-user-more" id="sb-user-btn" onclick="toggleUserMenu(event)">
+            <button class="sb-user-more" onclick="toggleUserMenu(event)">
                 <i class="fi fi-rr-menu-dots-vertical"></i>
             </button>
+
         </div>
     </div>
 
