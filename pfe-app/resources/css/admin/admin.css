@@ -119,15 +119,6 @@ select.admin-search-input { min-width: 160px; flex: 0; }
 .quick-action-label { font-size: 12px; font-weight: 600; color: var(--text-1); }
 .quick-action-sub   { font-size: 11px; color: var(--text-3); margin-top: 1px; }
 
-/* Progress rows */
-.progress-row { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-3); }
-.progress-label span:last-child { font-weight: 600; color: var(--text-1); }
-.progress-bar { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 4px; background: var(--gold); transition: width 0.4s ease; }
-.progress-fill.success { background: var(--green); }
-.progress-fill.danger  { background: var(--red); }
-
 /* Info rows (detail pages) */
 .info-row {
     display: flex;
@@ -152,19 +143,24 @@ select.admin-search-input { min-width: 160px; flex: 0; }
 
 /* Reclamation item */
 .rec-item {
-    padding: 16px 20px;
-    border-top: 1px solid var(--border);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
     transition: background 0.15s;
 }
 .rec-item:hover { background: var(--surface-2); }
+
 .rec-meta {
-    font-size: 11px; color: var(--text-3);
-    margin-top: 4px;
-    display: flex; gap: 12px; flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-3);
+    margin: 4px 0 6px;
 }
 .rec-message { font-size: 13px; color: var(--text-2); margin-top: 6px; line-height: 1.5; }
 .rec-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
@@ -217,9 +213,7 @@ select.admin-search-input { min-width: 160px; flex: 0; }
     font-size: 13px; color: var(--text-1); cursor: pointer;
 }
 
-/* ============================================================
-   ADMIN — QUICK ACTIONS
-   ============================================================ */
+/* ─── ADMIN QUICK ACTIONS ─────────────────────────── */
 .admin-quick-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -248,35 +242,5 @@ select.admin-search-input { min-width: 160px; flex: 0; }
     flex-shrink: 0;
 }
 .admin-quick-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
-.admin-quick-label {
-    font-size: 12px; font-weight: 600;
-    color: var(--text-1);
-}
-.admin-quick-sub {
-    font-size: 11px; color: var(--text-3);
-    margin-top: 1px;
-}
-
-/* ============================================================
-   RECLAMATION LIST ITEM
-   ============================================================ */
-.rec-item {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px 20px;
-    border-top: 1px solid var(--border);
-    transition: background 0.15s;
-}
-.rec-item:hover { background: var(--surface-2); }
-
-.rec-meta {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    font-size: 12px;
-    color: var(--text-3);
-    margin: 4px 0 6px;
-}
+.admin-quick-label { font-size: 12px; font-weight: 600; color: var(--text-1); }
+.admin-quick-sub   { font-size: 11px; color: var(--text-3); margin-top: 1px; }
