@@ -727,3 +727,11 @@ html.dark .student-avatar { border-color: rgba(201, 168, 108, 0.25); }
     font-family: "Times New Roman", Times, serif;
     font-size: 12pt;
 }
+
+.modal-note-row svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-3);
+    fill: none;
+    flex-shrink: 0;
+}

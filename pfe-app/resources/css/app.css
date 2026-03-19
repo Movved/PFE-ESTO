@@ -5,11 +5,11 @@
 @import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
 @import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css');
 
-/* â”€â”€ Component partials â”€â”€ */
+/* - Component partials - */
 @import './topbar.css';
 @import './sidebar.css';
 
-/* â”€â”€â”€ TOKENS â€” LIGHT (warm parchment) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - TOKENS : LIGHT (warm parchment) - */
 :root {
     --bg: #F0EBE1;
     --surface: #F7F3EC;
@@ -34,7 +34,7 @@
     --banner-stripe-start: rgba(139, 94, 26, 0.7);
     --menu-shadow: 0 -12px 24px rgba(100, 75, 35, 0.11);
 
-    /* Legacy aliases â€” old pages keep working */
+    /* Legacy aliases : old pages keep working */
     --primary: var(--gold);
     --primary-hover: var(--gold);
     --background: var(--bg);
@@ -45,7 +45,7 @@
     --warning: var(--gold);
 }
 
-/* â”€â”€â”€ TOKENS â€” DARK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - TOKENS : DARK - */
 html.dark {
     --bg: #0E0E0C;
     --surface: #161613;
@@ -67,7 +67,7 @@ html.dark {
     --menu-shadow: 0 -12px 32px rgba(0, 0, 0, 0.50);
 }
 
-/* â”€â”€â”€ RESET â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - RESET - */
 *,
 *::before,
 *::after {
@@ -104,7 +104,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* â”€â”€â”€ LAYOUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - LAYOUT - */
 
 .layout {
     display: flex;
@@ -150,7 +150,7 @@ body {
     border-radius: 2px;
 }
 
-/* â”€â”€â”€ DEPT BANNER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - DEPT BANNER - */
 .dept-banner {
     position: relative;
     background: var(--surface);
@@ -235,7 +235,7 @@ body {
     stroke-width: 1.5;
 }
 
-/* â”€â”€â”€ STATS GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - STATS GRID - */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -341,7 +341,7 @@ body {
     color: var(--gold);
 }
 
-/* â”€â”€â”€ TWO COL + CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - TWO COL + CARDS - */
 .two-col {
     display: grid;
     grid-template-columns: 1fr 360px;
@@ -411,7 +411,7 @@ body {
     padding: 22px;
 }
 
-/* â”€â”€â”€ TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - TABLE - */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -549,7 +549,7 @@ tbody td {
     color: var(--text-2);
 }
 
-/* â”€â”€â”€ BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - BADGES - */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -601,7 +601,7 @@ html.dark .badge-pending {
     font-size: 13px;
 }
 
-/* â”€â”€â”€ FILIERES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - FILIERES - */
 .filiere-list {
     padding: 10px 16px 14px;
     display: flex;
@@ -673,7 +673,7 @@ html.dark .badge-pending {
     transform: translateX(0);
 }
 
-/* FiliÃ¨re management rows */
+/* Filière management rows */
 .filiere-row {
     display: flex;
     align-items: center;
@@ -690,7 +690,7 @@ html.dark .badge-pending {
     border-top: none;
 }
 
-/* â”€â”€â”€ EMPTY STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - EMPTY STATE - */
 .empty-state {
     text-align: center;
     padding: 32px 24px;
@@ -710,7 +710,7 @@ html.dark .badge-pending {
     display: block;
 }
 
-/* â”€â”€â”€ ANIMATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - ANIMATIONS - */
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -723,7 +723,7 @@ html.dark .badge-pending {
     }
 }
 
-/* â”€â”€â”€ RESPONSIVE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* - RESPONSIVE - */
 @media (max-width: 1100px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -2010,7 +2010,7 @@ html.dark .module-card-icon {
 }
 
 /* ============================================================
-   NOTES FORM â€” SEARCH BAR
+   NOTES FORM : SEARCH BAR
    ============================================================ */
 .notes-search-wrap {
     padding: 12px 20px 8px;
@@ -2099,7 +2099,7 @@ html.dark .module-card-icon {
 }
 
 /* ============================================================
-   DASHBOARD â€” MODULE ITEM LIST
+   DASHBOARD : MODULE ITEM LIST
    ============================================================ */
 .module-item {
     display: flex;
@@ -2167,7 +2167,7 @@ html.dark .module-card-icon {
     stroke-width: 1.5;
 }
 
-============================================================*/ .pv-inst-header {
+.pv-inst-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -2896,4 +2896,14 @@ html.dark .module-card-icon {
     font-size: 16px;
     color: var(--text-3);
     font-weight: 300;
+}
+
+/* Remove number input spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
 }

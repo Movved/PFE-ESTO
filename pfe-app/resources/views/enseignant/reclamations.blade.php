@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <script>
         if (localStorage.getItem('theme') === 'dark' ||
@@ -10,8 +11,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réclamations</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/enseignant/enseignant.css', 'resources/js/enseignant/enseignant.js'])
 </head>
+
 <body>
     @php $user = Auth::user(); @endphp
 
@@ -24,19 +26,21 @@
             <main class="content">
                 @if(session('success'))
                     <div class="alert alert-success">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
                         </svg>
                         {{ session('success') }}
                     </div>
                 @endif
                 @if(session('error'))
                     <div class="alert alert-error">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="15" y1="9" x2="9" y2="15"/>
-                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="15" y1="9" x2="9" y2="15" />
+                            <line x1="9" y1="9" x2="15" y2="15" />
                         </svg>
                         {{ session('error') }}
                     </div>
@@ -77,7 +81,8 @@
                                                     {{ strtoupper(substr($rec->prenom_etudiant ?? 'E', 0, 1)) }}{{ strtoupper(substr($rec->nom_etudiant ?? 'T', 0, 1)) }}
                                                 </div>
                                                 <div>
-                                                    <div class="etu-name">{{ $rec->prenom_etudiant ?? '' }} {{ $rec->nom_etudiant ?? '' }}</div>
+                                                    <div class="etu-name">{{ $rec->prenom_etudiant ?? '' }}
+                                                        {{ $rec->nom_etudiant ?? '' }}</div>
                                                     <div class="cell-secondary">{{ $rec->cne_etudiant ?? '' }}</div>
                                                 </div>
                                             </div>
@@ -88,7 +93,8 @@
                                         </td>
                                         <td class="center">
                                             @if(isset($rec->note) && $rec->note !== null)
-                                                <span class="grade-value {{ $rec->note >= 12 ? 'grade-pass' : ($rec->note >= 10 ? 'grade-warn' : 'grade-fail') }}">
+                                                <span
+                                                    class="grade-value {{ $rec->note >= 12 ? 'grade-pass' : ($rec->note >= 10 ? 'grade-warn' : 'grade-fail') }}">
                                                     {{ number_format($rec->note, 2) }}
                                                 </span>
                                             @else
@@ -103,7 +109,8 @@
                                             @if(isset($rec->traite) && $rec->traite)
                                                 <span class="badge badge-resolved"><span class="badge-dot"></span>Traitée</span>
                                             @else
-                                                <span class="badge badge-pending"><span class="badge-dot"></span>En attente</span>
+                                                <span class="badge badge-pending"><span class="badge-dot"></span>En
+                                                    attente</span>
                                             @endif
                                         </td>
                                         <td class="center">
@@ -111,8 +118,7 @@
                                                 data-id="{{ $rec->id_reclamation }}"
                                                 data-etudiant="{{ ($rec->prenom_etudiant ?? '') . ' ' . ($rec->nom_etudiant ?? '') }}"
                                                 data-module="{{ $rec->nom_module ?? '' }}"
-                                                data-note="{{ $rec->note ?? '' }}"
-                                                data-message="{{ $rec->message ?? '' }}">
+                                                data-note="{{ $rec->note ?? '' }}" data-message="{{ $rec->message ?? '' }}">
                                                 Voir
                                             </button>
                                         </td>
@@ -121,9 +127,10 @@
                                     <tr>
                                         <td colspan="7">
                                             <div class="empty-state">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                                                    <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="1.5">
+                                                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                                    <path d="M13.73 21a2 2 0 01-3.46 0" />
                                                 </svg>
                                                 Aucune réclamation.
                                             </div>
@@ -139,7 +146,8 @@
     </div>
 
     {{-- MODAL --}}
-    <div class="modal-overlay" id="rec-modal" onclick="if(event.target===this)closeRecModal()">
+    <div class="modal-overlay" id="rec-modal" data-base-url="{{ url('enseignant/reclamations') }}"
+        onclick="if(event.target===this)closeRecModal()">
         <div class="modal">
             <div class="modal-header">
                 <div>
@@ -151,7 +159,7 @@
             <div class="modal-body">
                 <div class="modal-note-row">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                     </svg>
                     <span class="cell-secondary">Note actuelle :&nbsp;</span>
                     <span id="modal-note" style="font-size:14px;font-weight:600;"></span>
@@ -164,7 +172,8 @@
                     <input type="hidden" name="id_reclamation" id="modal-rec-id">
                     <div class="form-group">
                         <label class="form-label">Réponse / Commentaire</label>
-                        <textarea name="reponse" rows="3" class="form-textarea" placeholder="Expliquez votre décision..."></textarea>
+                        <textarea name="reponse" rows="3" class="form-textarea"
+                            placeholder="Expliquez votre décision..."></textarea>
                     </div>
                 </form>
             </div>
@@ -175,4 +184,5 @@
         </div>
     </div>
 </body>
+
 </html>
