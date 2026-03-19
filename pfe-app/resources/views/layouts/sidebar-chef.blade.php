@@ -22,7 +22,8 @@
 
         <div class="sb-label">Chef de département</div>
 
-        <a href="{{ route('chef.dashboard') }}" class="sb-item {{ request()->routeIs('chef.dashboard') ? 'active' : '' }}">
+        <a href="{{ route('chef.dashboard') }}"
+            class="sb-item {{ request()->routeIs('chef.dashboard') ? 'active' : '' }}">
             <i class="fi fi-rr-apps icon"></i>
             <span class="sb-item-label">Dashboard</span>
         </a>
@@ -30,11 +31,13 @@
             <i class="fi fi-rr-book-open-cover icon"></i>
             <span class="sb-item-label">Modules</span>
         </a>
-        <a href="{{ route('chef.filieres') }}" class="sb-item {{ request()->routeIs('chef.filieres') ? 'active' : '' }}">
+        <a href="{{ route('chef.filieres') }}"
+            class="sb-item {{ request()->routeIs('chef.filieres') ? 'active' : '' }}">
             <i class="fi fi-rr-folder icon"></i>
             <span class="sb-item-label">Filières</span>
         </a>
-        <a href="{{ route('chef.etudiants') }}" class="sb-item {{ request()->routeIs('chef.etudiants*') ? 'active' : '' }}">
+        <a href="{{ route('chef.etudiants') }}"
+            class="sb-item {{ request()->routeIs('chef.etudiants*') ? 'active' : '' }}">
             <i class="fi fi-rr-users icon"></i>
             <span class="sb-item-label">Étudiants</span>
         </a>
@@ -42,19 +45,23 @@
         <div class="sb-divider"></div>
         <div class="sb-label">Enseignant</div>
 
-        <a href="{{ route('enseignant.dashboard') }}" class="sb-item {{ request()->routeIs('enseignant.dashboard') ? 'active' : '' }}">
+        <a href="{{ route('enseignant.dashboard') }}"
+            class="sb-item {{ request()->routeIs('enseignant.dashboard') ? 'active' : '' }}">
             <i class="fi fi-rr-apps icon"></i>
             <span class="sb-item-label">Dashboard</span>
         </a>
-        <a href="{{ route('enseignant.modules') }}" class="sb-item {{ request()->routeIs('enseignant.modules*') ? 'active' : '' }}">
+        <a href="{{ route('enseignant.modules') }}"
+            class="sb-item {{ request()->routeIs('enseignant.modules*') ? 'active' : '' }}">
             <i class="fi fi-rr-chalkboard-user icon"></i>
             <span class="sb-item-label">Mes Modules</span>
         </a>
-        <a href="{{ route('enseignant.notes') }}" class="sb-item {{ request()->routeIs('enseignant.notes*') ? 'active' : '' }}">
+        <a href="{{ route('enseignant.notes') }}"
+            class="sb-item {{ request()->routeIs('enseignant.notes*') ? 'active' : '' }}">
             <i class="fi fi-rr-clipboard-list-check icon"></i>
             <span class="sb-item-label">Saisie des Notes</span>
         </a>
-        <a href="{{ route('enseignant.reclamations') }}" class="sb-item {{ request()->routeIs('enseignant.reclamations*') ? 'active' : '' }}">
+        <a href="{{ route('enseignant.reclamations') }}"
+            class="sb-item {{ request()->routeIs('enseignant.reclamations*') ? 'active' : '' }}">
             <i class="fi fi-rr-bell icon"></i>
             <span class="sb-item-label">Réclamations</span>
             @if(isset($pendingCount) && $pendingCount > 0)
