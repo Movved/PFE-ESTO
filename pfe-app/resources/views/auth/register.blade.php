@@ -11,23 +11,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body {
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            overflow: auto;
+            padding: 32px 16px;
         }
     </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/sidebar.css', 'resources/js/sidebar.js'])
 </head>
 
 <body>
-
     <div class="auth-card">
+
         <div class="auth-logo">
             <div class="auth-logo-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                     stroke-linejoin="round">
                     <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
                     <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
@@ -46,12 +48,12 @@
                 <div class="form-group">
                     <label for="prenom">Prénom</label>
                     <input type="text" id="prenom" name="prenom" value="{{ old('prenom') }}" required
-                        autocomplete="prenom" placeholder="Prenom">
+                        autocomplete="given-name" placeholder="Prénom">
                     @error('prenom')<span class="form-error">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
                     <label for="nom">Nom</label>
-                    <input type="text" id="nom" name="nom" value="{{ old('nom') }}" required autocomplete="nom"
+                    <input type="text" id="nom" name="nom" value="{{ old('nom') }}" required autocomplete="family-name"
                         placeholder="Nom">
                     @error('nom')<span class="form-error">{{ $message }}</span>@enderror
                 </div>
@@ -92,8 +94,8 @@
                 <button type="submit" class="btn btn-primary">S'inscrire</button>
             </div>
         </form>
-    </div>
 
+    </div>
 </body>
 
 </html>

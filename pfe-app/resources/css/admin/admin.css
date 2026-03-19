@@ -1,0 +1,282 @@
+/* ============================================================
+   ADMIN style
+   ============================================================ */
+
+/* Welcome banner */
+.admin-banner {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+.admin-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(var(--banner-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--banner-grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+.admin-banner::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(to bottom, var(--banner-stripe-start), transparent);
+    border-radius: 2px 0 0 2px;
+}
+.admin-banner-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 8px; opacity: 0.8;
+}
+.admin-banner-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px; font-weight: 400;
+    color: var(--text-1); line-height: 1.1;
+}
+.admin-banner-sub { margin-top: 8px; font-size: 13px; color: var(--text-2); }
+.admin-banner-icon {
+    flex-shrink: 0; width: 52px; height: 52px;
+    border: 1px solid var(--border-2);
+    border-radius: 14px; background: var(--gold-glow);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold); opacity: 0.7;
+}
+.admin-banner-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+
+/* Page header */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 400;
+    color: var(--text-1);
+}
+.page-sub {
+    font-size: 12px; color: var(--text-3);
+    margin-top: 3px;
+}
+
+/* Search bar */
+.admin-search-bar {
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+.admin-search-input {
+    flex: 1; min-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    background: var(--surface-2);
+    color: var(--text-1);
+    outline: none;
+    -webkit-appearance: none;
+    box-shadow: none;
+    transition: border-color 0.15s;
+}
+.admin-search-input:focus { border-color: var(--gold); }
+select.admin-search-input { min-width: 160px; flex: 0; }
+
+/* Quick actions grid */
+.quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 20px; }
+.quick-action-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    background: var(--surface-2);
+    transition: border-color 0.15s, background 0.15s;
+}
+.quick-action-item:hover { border-color: var(--gold); background: var(--gold-glow); }
+.quick-action-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px; background: var(--gold-dim);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: var(--gold);
+}
+.quick-action-icon svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.8; fill: none; }
+.quick-action-icon.green  { background: var(--green-bg); color: var(--green); }
+.quick-action-icon.red    { background: var(--red-bg); color: var(--red); }
+.quick-action-label { font-size: 12px; font-weight: 600; color: var(--text-1); }
+.quick-action-sub   { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+
+/* Progress rows */
+.progress-row { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-3); }
+.progress-label span:last-child { font-weight: 600; color: var(--text-1); }
+.progress-bar { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; background: var(--gold); transition: width 0.4s ease; }
+.progress-fill.success { background: var(--green); }
+.progress-fill.danger  { background: var(--red); }
+
+/* Info rows (detail pages) */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { font-size: 12px; color: var(--text-3); }
+.info-value { font-weight: 600; color: var(--text-1); }
+
+/* Message box */
+.message-box {
+    padding: 16px 20px;
+    font-size: 13px; color: var(--text-2);
+    line-height: 1.7;
+    background: var(--surface-2);
+    border-top: 1px solid var(--border);
+}
+
+/* Reclamation item */
+.rec-item {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    transition: background 0.15s;
+}
+.rec-item:hover { background: var(--surface-2); }
+.rec-meta {
+    font-size: 11px; color: var(--text-3);
+    margin-top: 4px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+}
+.rec-message { font-size: 13px; color: var(--text-2); margin-top: 6px; line-height: 1.5; }
+.rec-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+
+/* Log action colors */
+.log-action-create { color: var(--green); }
+.log-action-update { color: var(--gold); }
+.log-action-delete { color: var(--red); }
+
+/* Admin badges */
+.badge-chef     { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(201,168,108,0.2); }
+.badge-active   { background: var(--green-bg); color: var(--green); border: 1px solid rgba(46,107,79,0.18); }
+.badge-inactive { background: var(--surface-2); color: var(--text-3); border: 1px solid var(--border); }
+
+/* User avatar small */
+.user-avatar-sm {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(201,168,108,0.2);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 500;
+    flex-shrink: 0;
+}
+
+/* Pagination */
+.pagination-wrap {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Actions row */
+.actions-row { display: flex; gap: 10px; margin-top: 8px; }
+
+/* Card footer */
+.card-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+}
+
+/* Checkbox row */
+.checkbox-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-1); cursor: pointer;
+}
+
+/* ============================================================
+   ADMIN — QUICK ACTIONS
+   ============================================================ */
+.admin-quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 16px 20px;
+}
+.admin-quick-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    background: var(--surface-2);
+    transition: border-color 0.2s, transform 0.15s;
+}
+.admin-quick-item:hover {
+    border-color: var(--gold);
+    transform: translateY(-1px);
+}
+.admin-quick-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.admin-quick-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.admin-quick-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-1);
+}
+.admin-quick-sub {
+    font-size: 11px; color: var(--text-3);
+    margin-top: 1px;
+}
+
+/* ============================================================
+   RECLAMATION LIST ITEM
+   ============================================================ */
+.rec-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    transition: background 0.15s;
+}
+.rec-item:hover { background: var(--surface-2); }
+
+.rec-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-3);
+    margin: 4px 0 6px;
+}
