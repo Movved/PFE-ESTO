@@ -116,14 +116,12 @@ body {
 body {
     display: flex;
     height: 100vh;
-    overflow: hidden;
 }
 
 .main {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     min-width: 0;
     margin-left: var(--sidebar-w);
     transition: margin-left 0.3s ease;
@@ -1526,268 +1524,6 @@ textarea::placeholder {
 }
 
 /* ============================================================
-   LANDING PAGE
-   ============================================================ */
-.hero-title {
-    font-family: 'Cormorant Garamond', serif;
-    color: var(--text-1);
-}
-
-.hero-title em {
-    color: var(--gold);
-    font-style: normal;
-}
-
-.hero-sub,
-.hero-tag,
-footer {
-    color: var(--text-2);
-}
-
-.feature-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-}
-
-.feature-title {
-    color: var(--text-1);
-}
-
-.feature-desc {
-    color: var(--text-3);
-}
-
-.feature-icon svg {
-    stroke: var(--gold);
-}
-
-.nav {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-}
-
-.nav-logo-text {
-    font-family: 'Cormorant Garamond', serif;
-    color: var(--text-1);
-}
-
-/* ============================================================
-   UTILITY
-   ============================================================ */
-.action-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-    margin-left: 16px;
-}
-
-.action-group--center {
-    justify-content: center;
-    margin-left: 0;
-}
-
-/* ============================================================
-   PAGE: Module detail
-   ============================================================ */
-.module-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-3);
-    text-decoration: none;
-    margin-bottom: 20px;
-    transition: color 0.15s;
-}
-
-.module-back:hover {
-    color: var(--text-1);
-}
-
-.module-back svg {
-    width: 15px;
-    height: 15px;
-    stroke: currentColor;
-    stroke-width: 1.5;
-    fill: none;
-}
-
-.module-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 22px;
-}
-
-.module-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 400;
-    color: var(--text-1);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin-bottom: 8px;
-}
-
-.module-info-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: 24px;
-}
-
-.module-info-item {
-    background: var(--surface);
-    padding: 16px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.module-info-item:last-child {
-    grid-column: 1 / -1;
-}
-
-@media (max-width: 900px) {
-    .module-info-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .module-info-item:last-child {
-        grid-column: span 1;
-    }
-}
-
-.module-info-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    font-weight: 400;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-3);
-}
-
-.module-info-value {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-1);
-}
-
-.module-filiere-desc {
-    font-size: 13px;
-    color: var(--text-2);
-    line-height: 1.7;
-}
-
-.rep-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.rep-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.rep-label {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    min-width: 52px;
-}
-
-.rep-label span {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-1);
-}
-
-.rep-label small {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--text-3);
-}
-
-.rep-bar-wrap {
-    flex: 1;
-    height: 6px;
-    background: var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.rep-bar {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.4s ease;
-}
-
-.rep-bar-pass {
-    background: var(--green);
-}
-
-.rep-bar-warn {
-    background: var(--gold);
-}
-
-.rep-bar-fail {
-    background: var(--red);
-}
-
-.rep-count {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    min-width: 24px;
-    text-align: right;
-}
-
-.rep-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--text-3);
-}
-
-.rep-total strong {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-1);
-}
-
-.etu-cell {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.etu-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-1);
-}
-
-@media (max-width: 900px) {
-    .module-info-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* ============================================================
    PAGE: Etudiant notes
    ============================================================ */
 .student-banner {
@@ -2457,7 +2193,7 @@ html.dark .module-card-icon {
 }
 
 /* ============================================================
-   LANDING PAGE (lp- prefix)
+   LANDING PAGE 
    ============================================================ */
 .lp-body {
     margin: 0;
@@ -2535,7 +2271,6 @@ html.dark .module-card-icon {
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 380px;
-    min-height: calc(100vh - 64px);
 }
 
 .lp-grid-bg {
