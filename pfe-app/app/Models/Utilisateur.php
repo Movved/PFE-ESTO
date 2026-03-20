@@ -11,9 +11,11 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'Utilisateur';
+    protected $table = 'utilisateur';
     protected $primaryKey = 'id_user';
-    public $timestamps = false; // Using date_creation instead
+    public $timestamps = false; 
+
+    public $rememberTokenName = false;
 
     protected $fillable = [
         'nom', 'prenom', 'email', 'mot_de_passe', 'role', 'actif'

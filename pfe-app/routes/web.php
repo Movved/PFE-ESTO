@@ -13,14 +13,15 @@ use App\Http\Controllers\Admin\FiliereController     as AdminFiliere;
 use App\Http\Controllers\Admin\ModuleController      as AdminModule;
 use App\Http\Controllers\Admin\SemestreController    as AdminSemestre;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChefController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()
+        ->view('welcome')
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', '0');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -108,5 +109,17 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
 });
+// Pour chef de departement
+Route::get('/chef/dashboard', [ChefController::class, 'dashboard'])->name('chef.dashboard');
+Route::get('/chef/modules', [ChefController::class, 'modules'])->name('chef.modules');
+Route::post('/chef/modules', [ChefController::class, 'storeModule'])->name('chef.modules.store');
+Route::put('/chef/modules/{id}', [ChefController::class, 'updateModule'])->name('chef.modules.update');
+Route::delete('/chef/modules/{id}', [ChefController::class, 'deleteModule'])->name('chef.modules.delete');
+Route::get('/chef/filieres', [ChefController::class, 'filieres'])->name('chef.filieres');
+Route::post('/chef/filieres', [ChefController::class, 'storeFiliere'])->name('chef.filieres.store');
+Route::put('/chef/filieres/{id}', [ChefController::class, 'updateFiliere'])->name('chef.filieres.update');
+Route::delete('/chef/filieres/{id}', [ChefController::class, 'deleteFiliere'])->name('chef.filieres.delete');
+Route::get('/chef/etudiants', [ChefController::class, 'etudiants'])->name('chef.etudiants');
+Route::get('/chef/etudiants/{id}/notes', [ChefController::class, 'etudiantNotes'])->name('chef.etudiant.notes');
 
 require __DIR__ . '/auth.php';

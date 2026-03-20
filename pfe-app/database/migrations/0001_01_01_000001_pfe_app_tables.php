@@ -46,7 +46,7 @@ return new class extends Migration {
 
         Schema::create('filiere', function (Blueprint $table) {
             $table->id('id_filiere');
-            $table->string('nom_filiere', 50)->unique();
+            $table->string('nom_filiere', 255)->unique();
             $table->text('description');
             $table->unsignedBigInteger('id_departement');
 
@@ -69,12 +69,12 @@ return new class extends Migration {
 
             $table->foreign('id_annee')->references('id_annee')->on('annee_academique')->cascadeOnDelete();
         });
-        DB::statement('ALTER TABLE semestre ADD CONSTRAINT chk_numero CHECK (numero IN (1,2))');
+        DB::statement('ALTER TABLE semestre ADD CONSTRAINT chk_numero CHECK (numero IN (1,2,3,4))');
 
         Schema::create('module', function (Blueprint $table) {
             $table->id('id_module');
             $table->string('code_module', 20)->unique();
-            $table->string('nom_module', 50);
+            $table->string('nom_module', 255);
             $table->unsignedBigInteger('id_semestre');
             $table->unsignedBigInteger('id_enseignant');
 
