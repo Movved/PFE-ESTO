@@ -67,7 +67,7 @@ class EnseignantController extends Controller
         $moyenneGlobale = $notes->count() ? round($notes->avg(), 2) : null;
 
         // Reclamations for this teacher's modules (most recent first, limit 10)
-        $reclamations = DB::table('reclamation')
+        $query = DB::table('reclamation')
             ->join('note',      'reclamation.id_note',      '=', 'note.id_note')
             ->join('module',    'note.id_module',            '=', 'module.id_module')
             ->join('etudiant',  'note.id_etudiant',          '=', 'etudiant.id_etudiant')
@@ -83,17 +83,22 @@ class EnseignantController extends Controller
                 'utilisateur.prenom as prenom_etudiant',
                 'utilisateur.nom    as nom_etudiant',
                 'etudiant.cne       as cne_etudiant'
-            )
-            ->orderByDesc('reclamation.date_reclamation')
-            ->limit(10)
-            ->get();
+            );
 
         if (Schema::hasColumn('reclamation', 'traite')) {
-            $recIds = $reclamations->pluck('id_reclamation');
-            $traiteMap = DB::table('reclamation')->whereIn('id_reclamation', $recIds)->pluck('traite', 'id_reclamation');
-            $reclamations->each(fn ($r) => $r->traite = $traiteMap->get($r->id_reclamation, false));
-        } else {
+            $query->addSelect('reclamation.traite');
+        }
+        if (Schema::hasColumn('reclamation', 'reponse')) {
+            $query->addSelect('reclamation.reponse');
+        }
+
+        $reclamations = $query->orderByDesc('reclamation.date_reclamation')->limit(10)->get();
+
+        if (!Schema::hasColumn('reclamation', 'traite')) {
             $reclamations->each(fn ($r) => $r->traite = false);
+        }
+        if (!Schema::hasColumn('reclamation', 'reponse')) {
+            $reclamations->each(fn ($r) => $r->reponse = null);
         }
 
         $pendingCount = $this->getPendingReclamationsCount($id);
@@ -202,7 +207,6 @@ class EnseignantController extends Controller
         ];
         $moyenne = $notes->count() ? round($notes->avg(), 2) : null;
 
-        // Reclamations count for this module
         $reclamationsCount = DB::table('reclamation')
             ->join('note', 'reclamation.id_note', '=', 'note.id_note')
             ->where('note.id_module', $id)
@@ -337,7 +341,7 @@ class EnseignantController extends Controller
     }
 
     /**
-     * PV (procès-verbal) — printable page; use browser Print → Save as PDF.
+     * PV (procès-verbal) — printable page.
      */
     public function pv($id)
     {
@@ -386,14 +390,16 @@ class EnseignantController extends Controller
         $reclamations = collect();
 
         if ($moduleIds->isNotEmpty()) {
-            $reclamations = DB::table('reclamation')
+            $query = DB::table('reclamation')
                 ->join('note',        'reclamation.id_note',   '=', 'note.id_note')
                 ->join('module',      'note.id_module',         '=', 'module.id_module')
                 ->join('etudiant',    'note.id_etudiant',       '=', 'etudiant.id_etudiant')
                 ->join('utilisateur', 'etudiant.id_user',       '=', 'utilisateur.id_user')
                 ->whereIn('module.id_module', $moduleIds)
                 ->select(
-                    'reclamation.*',
+                    'reclamation.id_reclamation',
+                    'reclamation.message',
+                    'reclamation.date_reclamation',
                     'note.note',
                     'module.nom_module',
                     'module.code_module',
@@ -401,24 +407,40 @@ class EnseignantController extends Controller
                     'utilisateur.nom as nom_etudiant',
                     'etudiant.cne as cne_etudiant'
                 )
-                ->orderByDesc('reclamation.date_reclamation')
-                ->get();
-        }
-        $reclamations->each(fn ($r) => $r->traite = false);
+                ->orderByDesc('reclamation.date_reclamation');
 
+            // Ajouter traite et reponse si les colonnes existent
+            if (Schema::hasColumn('reclamation', 'traite')) {
+                $query->addSelect('reclamation.traite');
+            }
+            if (Schema::hasColumn('reclamation', 'reponse')) {
+                $query->addSelect('reclamation.reponse');
+            }
+
+            $reclamations = $query->get();
+        }
+
+        // Valeurs par défaut si colonnes absentes
+        if (!Schema::hasColumn('reclamation', 'traite')) {
+            $reclamations->each(fn ($r) => $r->traite = false);
+        }
+        if (!Schema::hasColumn('reclamation', 'reponse')) {
+            $reclamations->each(fn ($r) => $r->reponse = null);
+        }
 
         $pendingCount = $this->getPendingReclamationsCount($enseignant->id_enseignant);
         return view('enseignant.reclamations', compact('reclamations', 'pendingCount'));
     }
 
     /**
-     * Mark a reclamation as treated.
+     * Mark a reclamation as treated + save the teacher's response/motif.
      */
     public function traiterReclamation(Request $request, $id)
     {
         $enseignant = $this->getEnseignant();
         if (!$enseignant) abort(403, 'Accès refusé.');
 
+        // Vérifier que la réclamation appartient bien à un module de ce prof
         $moduleIds = DB::table('module')->where('id_enseignant', $enseignant->id_enseignant)->pluck('id_module');
         $noteIds   = DB::table('note')->whereIn('id_module', $moduleIds)->pluck('id_note');
 
@@ -426,19 +448,31 @@ class EnseignantController extends Controller
             ->where('id_reclamation', $id)
             ->whereIn('id_note', $noteIds)
             ->first();
+
         if (!$rec) abort(404, 'Réclamation introuvable.');
 
+        // Validation : le motif/réponse est obligatoire
+        $request->validate([
+            'reponse' => 'required|string|min:5|max:1000',
+        ], [
+            'reponse.required' => 'Veuillez saisir un motif ou une réponse avant de valider.',
+            'reponse.min'      => 'La réponse doit contenir au moins 5 caractères.',
+            'reponse.max'      => 'La réponse ne peut pas dépasser 1000 caractères.',
+        ]);
+
         $data = [];
+
         if (Schema::hasColumn('reclamation', 'traite')) {
             $data['traite'] = true;
         }
         if (Schema::hasColumn('reclamation', 'reponse')) {
             $data['reponse'] = $request->input('reponse');
         }
+
         if (!empty($data)) {
             DB::table('reclamation')->where('id_reclamation', $id)->update($data);
         }
 
-    return back()->with('success', 'Réclamation consultée.');
+        return back()->with('success', 'Réclamation traitée avec succès.');
     }
 }
