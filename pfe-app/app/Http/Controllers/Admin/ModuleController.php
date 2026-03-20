@@ -10,12 +10,11 @@ class ModuleController extends Controller
 {
     public function index(Request $request)
     {
-        $query = DB::table('MODULE_ as m')
+        $query = DB::table('MODULE as m')
             ->join('SEMESTRE as s', 's.id_semestre', '=', 'm.id_semestre')
             ->join('ANNEE_ACADEMIQUE as a', 'a.id_annee', '=', 's.id_annee')
-            ->join('FILIERE as f', 'f.id_filiere', '=', 'a.id_filiere')
-            ->leftJoin('intervenir as i', 'i.id_module', '=', 'm.id_module')
-            ->leftJoin('ENSEIGNANT as e', 'e.id_enseignant', '=', 'i.id_enseignant')
+            ->join('FILIERE as f', 'f.id_filiere', '=', 's.id_filiere')
+            ->leftJoin('ENSEIGNANT as e', 'e.id_enseignant', '=', 'm.id_enseignant')
             ->leftJoin('Utilisateur as u', 'u.id_user', '=', 'e.id_user')
             ->select(
                 'm.id_module',
@@ -32,7 +31,7 @@ class ModuleController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('m.nom_module', 'like', '%' . $request->search . '%')
                   ->orWhere('m.code_module', 'like', '%' . $request->search . '%');
             });
@@ -48,7 +47,7 @@ class ModuleController extends Controller
     {
         $semestres = DB::table('SEMESTRE as s')
             ->join('ANNEE_ACADEMIQUE as a', 'a.id_annee', '=', 's.id_annee')
-            ->join('FILIERE as f', 'f.id_filiere', '=', 'a.id_filiere')
+            ->join('FILIERE as f', 'f.id_filiere', '=', 's.id_filiere')
             ->select('s.id_semestre', 's.numero', 'a.libelle', 'f.nom_filiere')
             ->orderBy('f.nom_filiere')->orderBy('a.libelle')->orderBy('s.numero')
             ->get();
@@ -66,31 +65,25 @@ class ModuleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'code_module'    => 'required|string|max:20|unique:MODULE_,code_module',
-            'nom_module'     => 'required|string|max:100',
-            'id_semestre'    => 'required|exists:SEMESTRE,id_semestre',
-            'id_enseignant'  => 'nullable|exists:ENSEIGNANT,id_enseignant',
+            'code_module'   => 'required|string|max:20|unique:MODULE,code_module',
+            'nom_module'    => 'required|string|max:255',
+            'id_semestre'   => 'required|exists:SEMESTRE,id_semestre',
+            'id_enseignant' => 'required|exists:ENSEIGNANT,id_enseignant',
         ]);
 
-        $id = DB::table('MODULE_')->insertGetId([
-            'code_module' => $request->code_module,
-            'nom_module'  => $request->nom_module,
-            'id_semestre' => $request->id_semestre,
+        $id = DB::table('MODULE')->insertGetId([
+            'code_module'   => $request->code_module,
+            'nom_module'    => $request->nom_module,
+            'id_semestre'   => $request->id_semestre,
+            'id_enseignant' => $request->id_enseignant,
         ]);
-
-        if ($request->filled('id_enseignant')) {
-            DB::table('intervenir')->insert([
-                'id_enseignant' => $request->id_enseignant,
-                'id_module'     => $id,
-            ]);
-        }
 
         DB::table('LOG_ACTION')->insert([
-            'action'           => 'CREATE',
-            'table_concernee'  => 'MODULE_',
-            'id_enregistrement'=> $id,
-            'date_action'      => now(),
-            'id_user'          => auth()->id(),
+            'action'            => 'CREATE',
+            'table_concernee'   => 'MODULE',
+            'id_enregistrement' => $id,
+            'date_action'       => now(),
+            'id_user'           => auth()->id(),
         ]);
 
         return redirect()->route('admin.modules')->with('success', 'Module créé avec succès.');
@@ -98,10 +91,9 @@ class ModuleController extends Controller
 
     public function edit($id)
     {
-        $module = DB::table('MODULE_ as m')
+        $module = DB::table('MODULE as m')
             ->join('SEMESTRE as s', 's.id_semestre', '=', 'm.id_semestre')
-            ->leftJoin('intervenir as i', 'i.id_module', '=', 'm.id_module')
-            ->select('m.*', 's.numero as semestre_numero', 'i.id_enseignant')
+            ->select('m.*', 's.numero as semestre_numero')
             ->where('m.id_module', $id)
             ->first();
 
@@ -109,7 +101,7 @@ class ModuleController extends Controller
 
         $semestres = DB::table('SEMESTRE as s')
             ->join('ANNEE_ACADEMIQUE as a', 'a.id_annee', '=', 's.id_annee')
-            ->join('FILIERE as f', 'f.id_filiere', '=', 'a.id_filiere')
+            ->join('FILIERE as f', 'f.id_filiere', '=', 's.id_filiere')
             ->select('s.id_semestre', 's.numero', 'a.libelle', 'f.nom_filiere')
             ->orderBy('f.nom_filiere')->orderBy('a.libelle')->orderBy('s.numero')
             ->get();
@@ -127,33 +119,25 @@ class ModuleController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'code_module'   => 'required|string|max:20|unique:MODULE_,code_module,' . $id . ',id_module',
-            'nom_module'    => 'required|string|max:100',
+            'code_module'   => 'required|string|max:20|unique:MODULE,code_module,' . $id . ',id_module',
+            'nom_module'    => 'required|string|max:255',
             'id_semestre'   => 'required|exists:SEMESTRE,id_semestre',
-            'id_enseignant' => 'nullable|exists:ENSEIGNANT,id_enseignant',
+            'id_enseignant' => 'required|exists:ENSEIGNANT,id_enseignant',
         ]);
 
-        DB::table('MODULE_')->where('id_module', $id)->update([
-            'code_module' => $request->code_module,
-            'nom_module'  => $request->nom_module,
-            'id_semestre' => $request->id_semestre,
+        DB::table('MODULE')->where('id_module', $id)->update([
+            'code_module'   => $request->code_module,
+            'nom_module'    => $request->nom_module,
+            'id_semestre'   => $request->id_semestre,
+            'id_enseignant' => $request->id_enseignant,
         ]);
-
-        // Update intervenir pivot
-        DB::table('intervenir')->where('id_module', $id)->delete();
-        if ($request->filled('id_enseignant')) {
-            DB::table('intervenir')->insert([
-                'id_enseignant' => $request->id_enseignant,
-                'id_module'     => $id,
-            ]);
-        }
 
         DB::table('LOG_ACTION')->insert([
-            'action'           => 'UPDATE',
-            'table_concernee'  => 'MODULE_',
-            'id_enregistrement'=> $id,
-            'date_action'      => now(),
-            'id_user'          => auth()->id(),
+            'action'            => 'UPDATE',
+            'table_concernee'   => 'MODULE',
+            'id_enregistrement' => $id,
+            'date_action'       => now(),
+            'id_user'           => auth()->id(),
         ]);
 
         return redirect()->route('admin.modules')->with('success', 'Module mis à jour.');
@@ -161,14 +145,14 @@ class ModuleController extends Controller
 
     public function destroy($id)
     {
-        DB::table('MODULE_')->where('id_module', $id)->delete();
+        DB::table('MODULE')->where('id_module', $id)->delete();
 
         DB::table('LOG_ACTION')->insert([
-            'action'           => 'DELETE',
-            'table_concernee'  => 'MODULE_',
-            'id_enregistrement'=> $id,
-            'date_action'      => now(),
-            'id_user'          => auth()->id(),
+            'action'            => 'DELETE',
+            'table_concernee'   => 'MODULE',
+            'id_enregistrement' => $id,
+            'date_action'       => now(),
+            'id_user'           => auth()->id(),
         ]);
 
         return redirect()->route('admin.modules')->with('success', 'Module supprimé.');
