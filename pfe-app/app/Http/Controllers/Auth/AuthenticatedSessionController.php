@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -36,11 +37,11 @@ class AuthenticatedSessionController extends Controller
             case 'ADMIN':
                 return redirect('/admin/dashboard');
             case 'ENSEIGNANT':
-                    $enseignant = \DB::table('ENSEIGNANT')->where('id_user', $user->id_user)->first();
-                    if ($enseignant && $enseignant->is_chef) {
-                        return redirect()->route('chef.dashboard');
-                    }
-                    return redirect()->route('enseignant.dashboard');
+                $enseignant = DB::table('ENSEIGNANT')->where('id_user', $user->id_user)->first();
+                if ($enseignant && $enseignant->is_chef) {
+                    return redirect()->route('chef.dashboard');
+                }
+                return redirect()->route('enseignant.dashboard');
             case 'ETUDIANT':
                 return redirect('/etudiant/dashboard');
             default:
