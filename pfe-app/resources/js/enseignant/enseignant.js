@@ -74,20 +74,6 @@ window.downloadPDF = function () {
 };
 
 // Search bar
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Module search (notes.blade.php)
-    const moduleSearch = document.getElementById('module-search');
-    if (moduleSearch) {
-        moduleSearch.addEventListener('input', function () {
-            const q = this.value.toLowerCase();
-            document.querySelectorAll('.module-card').forEach(card => {
-                card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
-            });
-        });
-    }
-});
-
 // Student search (notes-form.blade.php)
 window.filterStudents = function (val) {
     const q = val.toLowerCase();
