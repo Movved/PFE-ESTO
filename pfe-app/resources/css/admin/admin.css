@@ -244,3 +244,22 @@ select.admin-search-input { min-width: 160px; flex: 0; }
 .admin-quick-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 .admin-quick-label { font-size: 12px; font-weight: 600; color: var(--text-1); }
 .admin-quick-sub   { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+
+/* Module back link */
+.module-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-2);
+    text-decoration: none;
+    margin-bottom: 16px;
+    transition: color 0.15s;
+}
+.module-back:hover { color: var(--text-1); }
+.module-back svg { width: 14px; height: 14px; }
+
+.content > .card { 
+    margin-left: auto; 
+    margin-right: auto; 
+}
