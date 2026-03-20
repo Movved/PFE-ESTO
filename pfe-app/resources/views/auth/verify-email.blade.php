@@ -1,31 +1,78 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+<!DOCTYPE html>
+<html lang="fr">
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+<head>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialiser le mot de passe</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <div class="auth-logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+                </svg>
+            </div>
+            <span class="auth-logo-text">Gestionnaire</span>
         </div>
-    @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
+        <div class="auth-title">Nouveau mot de passe</div>
+        <div class="auth-sub">Choisissez un nouveau mot de passe pour votre compte.</div>
+
+        <form method="POST" action="{{ route('password.store') }}">
             @csrf
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
+            <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
+            <div class="form-group">
+                <label for="email">Adresse e-mail</label>
+                <input type="email" id="email" name="email" value="{{ old('email', $request->email) }}" required
+                    autofocus autocomplete="username" placeholder="prenom.nom24@ump.ac.ma">
+                @error('email')<span class="form-error">{{ $message }}</span>@enderror
+            </div>
+
+            <div class="form-group">
+                <label for="password">Nouveau mot de passe</label>
+                <input type="password" id="password" name="password" required autocomplete="new-password"
+                    placeholder="••••••••">
+                @error('password')<span class="form-error">{{ $message }}</span>@enderror
+            </div>
+
+            <div class="form-group">
+                <label for="password_confirmation">Confirmer le mot de passe</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required
+                    autocomplete="new-password" placeholder="••••••••">
+                @error('password_confirmation')<span class="form-error">{{ $message }}</span>@enderror
+            </div>
+
+            <div class="auth-footer">
+                <a href="{{ route('login') }}" class="auth-link">Retour à la connexion</a>
+                <button type="submit" class="btn btn-primary">Réinitialiser</button>
             </div>
         </form>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                {{ __('Log Out') }}
-            </button>
-        </form>
     </div>
-</x-guest-layout>
+</body>
+
+</html>

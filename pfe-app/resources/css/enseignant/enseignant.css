@@ -1,0 +1,737 @@
+/* ============================================================
+   ENSEIGNANT — role-specific styles
+   Shared design tokens and components are in app.css
+   ============================================================ */
+
+/* ─── NOTES FORM — SEARCH BAR ────────────────────── */
+.notes-search-wrap {
+    padding: 12px 20px 8px;
+}
+
+.notes-search-inner {
+    position: relative;
+    max-width: 360px;
+    display: flex;
+    align-items: center;
+}
+
+.notes-search-inner svg:first-child {
+    position: absolute;
+    left: 10px;
+    width: 14px;
+    height: 14px;
+    stroke: var(--text-3);
+    fill: none;
+    pointer-events: none;
+}
+
+.notes-search-inner input {
+    width: 100%;
+    padding: 8px 34px 8px 34px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    background: var(--surface-2);
+    color: var(--text-1);
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    box-shadow: none;
+}
+
+.notes-search-inner input:focus {
+    border-color: var(--gold);
+}
+
+.notes-search-clear {
+    display: none;
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    line-height: 0;
+    opacity: 0.5;
+}
+
+.notes-search-clear svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    fill: none;
+}
+
+.notes-search-count {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 5px;
+    min-height: 16px;
+}
+
+/* ─── NOTE INPUT ─────────────────────────────────── */
+.note-input {
+    width: 70px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    background: var(--surface-2);
+    color: var(--text-1);
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    box-shadow: none;
+}
+
+.note-input:focus {
+    border-color: var(--gold);
+}
+
+/* ─── MODULE CARDS GRID ──────────────────────────── */
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    padding: 20px;
+}
+
+.module-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    text-decoration: none;
+    color: var(--text-1);
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.module-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.module-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(139, 94, 26, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+}
+
+html.dark .module-card-icon {
+    border-color: rgba(201, 168, 108, 0.2);
+}
+
+.module-card-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.module-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.module-card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-1);
+    line-height: 1.2;
+}
+
+.module-card-meta {
+    font-size: 12px;
+    color: var(--text-3);
+}
+
+.module-card-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-3);
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.module-card-count svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+/* ─── GRADE DISTRIBUTION WIDGETS ─────────────────── */
+.rep-pills {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.rep-pill {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 12px;
+}
+
+.rep-pill-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.rep-pill-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.rep-pill-divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--border);
+    flex-shrink: 0;
+}
+
+.rep-stack-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rep-stack {
+    height: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--surface-2);
+    display: flex;
+    width: 100%;
+}
+
+.rep-stack-seg {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.rep-stack-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+    color: var(--text-3);
+}
+
+.rep-legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ─── GRADE REPARTITION LIST ─────────────────────── */
+.rep-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.rep-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rep-label {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 52px;
+}
+
+.rep-label span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.rep-label small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-3);
+}
+
+.rep-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.rep-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+.rep-bar-pass { background: var(--green); }
+.rep-bar-warn { background: var(--gold); }
+.rep-bar-fail { background: var(--red); }
+
+.rep-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 24px;
+    text-align: right;
+}
+
+.rep-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-3);
+}
+
+.rep-total strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-1);
+}
+
+/* ─── MODULE ITEM LIST ───────────────────────────── */
+.module-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text-1);
+    transition: background 0.15s;
+}
+
+.module-item:last-child { border-bottom: none; }
+
+.module-item:hover { background: var(--surface-2); }
+
+.module-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.module-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.module-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.module-item-sem {
+    font-size: 12px;
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.module-item-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-3);
+}
+
+.module-item-count svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+}
+
+/* ─── MODULE DETAIL PAGE ─────────────────────────── */
+.module-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-3);
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: color 0.15s;
+}
+
+.module-back:hover { color: var(--text-1); }
+
+.module-back svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.module-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.module-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--text-1);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+}
+
+.module-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.module-info-item {
+    background: var(--surface);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.module-info-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.module-info-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.module-filiere-desc {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+    .module-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ─── STUDENT RESULT BANNER (enseignant notes view) ── */
+.student-banner {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    overflow: hidden;
+}
+
+.student-banner::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--banner-stripe-start), transparent);
+    border-radius: 2px 0 0 2px;
+}
+
+.student-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(139, 94, 26, 0.2);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+html.dark .student-avatar { border-color: rgba(201, 168, 108, 0.25); }
+
+.student-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-1);
+    margin-bottom: 4px;
+}
+
+.student-meta {
+    display: flex;
+    gap: 18px;
+    font-size: 12.5px;
+    color: var(--text-3);
+}
+
+.student-meta span { display: flex; align-items: center; gap: 5px; }
+
+.student-meta svg {
+    width: 13px; height: 13px;
+    stroke: currentColor; stroke-width: 1.5; fill: none;
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-mini {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stat-mini-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+
+.stat-mini-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--text-1);
+    letter-spacing: -0.02em;
+}
+
+/* ─── ETU CELL (table cell with avatar) ──────────── */
+.etu-cell { display: flex; align-items: center; gap: 10px; }
+
+.etu-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-1);
+}
+
+/* ─── RECLAMATION TRUNCATED MESSAGE ──────────────── */
+.rec-msg {
+    font-size: 13px;
+    color: var(--text-2);
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ─── PV PRINT DOCUMENT ──────────────────────────── */
+.pv-inst-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+    font-size: 10pt;
+    line-height: 1.6;
+    color: #000;
+}
+
+.pv-inst-right { text-align: right; }
+
+.pv-center-title { text-align: center; margin: 14px 0 4px; color: #000; }
+.pv-center-title h1 {
+    font-size: 14pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #000;
+}
+
+.pv-rule { width: 60%; margin: 6px auto 0; border: none; border-top: 2px solid #000; }
+
+.pv-info-block {
+    margin: 16px 0 12px;
+    font-size: 11pt;
+    line-height: 2;
+    border: 1px solid #000;
+    padding: 8px 14px;
+    color: #000;
+}
+
+.pv-info-row { display: flex; }
+.pv-info-col { flex: 1; }
+.pv-info-label { font-weight: bold; }
+
+.pv-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 11pt;
+    color: #000;
+}
+
+.pv-table thead tr { background: #e8e8e8; }
+
+.pv-table th {
+    border: 1px solid #000;
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 10.5pt;
+}
+
+.pv-table td {
+    border: 1px solid #000;
+    padding: 5px 8px;
+    text-align: center;
+    color: #000;
+}
+
+.pv-table td.pv-left { text-align: left; }
+
+.pv-table tbody tr:nth-child(even) { background: #f5f5f5; }
+
+.pv-summary {
+    margin-top: 8px;
+    font-size: 10pt;
+    display: flex;
+    gap: 24px;
+    color: #000;
+}
+
+.pv-summary span { border-left: 3px solid #000; padding-left: 6px; }
+
+.pv-sig-block {
+    margin-top: 32px;
+    display: flex;
+    justify-content: flex-end;
+    color: #000;
+}
+
+.pv-sig-box { width: 200px; text-align: center; font-size: 10.5pt; }
+.pv-sig-title { font-weight: bold; margin-bottom: 4px; }
+.pv-sig-name { margin-bottom: 40px; }
+.pv-sig-line { border-top: 1px solid #000; }
+.pv-sig-hint { font-size: 9pt; color: #555; margin-top: 3px; }
+
+@media print {
+    .no-print { display: none !important; }
+    .pv-body { background: #fff; }
+    .pv-shell { box-shadow: none; margin: 0; padding: 15mm 15mm; border-radius: 0; }
+}
+
+.pv-body {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 32px 24px 48px;
+}
+
+.pv-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 210mm;
+}
+
+.pv-shell {
+    width: 100%;
+    max-width: 210mm;
+    padding: 20mm 18mm;
+    background: #fff;
+    color: #000;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.10);
+    border-radius: 4px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+}
+
+.modal-note-row svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-3);
+    fill: none;
+    flex-shrink: 0;
+}

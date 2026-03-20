@@ -1,0 +1,81 @@
+/* ============================================================
+   CHEF DE DÉPARTEMENT — role-specific styles
+   Shared design tokens and components are in app.css
+   ============================================================ */
+
+/* ─── FILIÈRE LIST (chef dashboard right panel) ──── */
+.filiere-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+}
+
+.filiere-row:hover { background: var(--surface-2); }
+.filiere-row:first-child { border-top: none; }
+
+/* ─── CHEF QUICK ACTIONS ─────────────────────────── */
+.chef-quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 16px 20px;
+}
+
+.chef-quick-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    background: var(--surface-2);
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+.chef-quick-item:hover {
+    border-color: var(--gold);
+    transform: translateY(-1px);
+}
+
+.chef-quick-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+.chef-quick-icon svg {
+    width: 16px; height: 16px;
+    stroke: currentColor; fill: none; stroke-width: 1.5;
+}
+
+.chef-quick-label { font-size: 12px; font-weight: 600; color: var(--text-1); }
+.chef-quick-sub   { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+
+/* ─── ENSEIGNANT LIST (chef pages) ───────────────── */
+.ens-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    transition: background 0.15s;
+}
+
+.ens-card:first-child { border-top: none; }
+.ens-card:hover { background: var(--surface-2); }
+
+.ens-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.ens-email {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 2px;
+}
