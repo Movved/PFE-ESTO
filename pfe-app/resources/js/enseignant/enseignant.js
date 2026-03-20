@@ -72,3 +72,51 @@ window.downloadPDF = function () {
             btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Télécharger PDF';
         });
 };
+
+// Search bar
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Module search (notes.blade.php)
+    const moduleSearch = document.getElementById('module-search');
+    if (moduleSearch) {
+        moduleSearch.addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+    }
+});
+
+// Student search (notes-form.blade.php)
+window.filterStudents = function (val) {
+    const q = val.toLowerCase();
+    const rows = document.querySelectorAll('#students-tbody tr[data-nom]');
+    let visible = 0;
+
+    rows.forEach(row => {
+        const match = row.dataset.nom.includes(q) ||
+                      row.dataset.prenom.includes(q) ||
+                      row.dataset.cne.includes(q);
+        row.style.display = match ? '' : 'none';
+        if (match) visible++;
+    });
+
+    const noResults = document.getElementById('no-results-row');
+    if (noResults) noResults.style.display = visible === 0 ? '' : 'none';
+
+    const count = document.getElementById('search-count');
+    if (count) count.textContent = q ? `${visible} résultat(s)` : '';
+
+    const clear = document.getElementById('search-clear');
+    if (clear) clear.style.display = val ? '' : 'none';
+};
+
+window.clearSearch = function () {
+    const input = document.getElementById('student-search');
+    if (input) {
+        input.value = '';
+        window.filterStudents('');
+        input.focus();
+    }
+};
