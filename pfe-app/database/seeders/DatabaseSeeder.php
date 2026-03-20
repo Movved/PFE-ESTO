@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             'note',
             'module',
             'semestre',
-            'filiere_annee', // NEW
+            'filiere_annee', 
             'annee_academique',
             'filiere',
             'etudiant',
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             'departement',
             'utilisateur'
         ] as $table) {
-            DB::table($table)->delete(); // safer than truncate
+            DB::table($table)->delete(); 
         }
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
