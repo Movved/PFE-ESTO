@@ -13,7 +13,6 @@ window.filterCourses = function () {
         if (match) anyVisible = true;
     });
 
-    // Hide semester labels if all cards in that section are hidden
     document.querySelectorAll('[data-semester]').forEach(label => {
         const grid = label.nextElementSibling;
         if (!grid) return;
@@ -21,4 +20,33 @@ window.filterCourses = function () {
         label.style.display = visible ? '' : 'none';
         grid.style.display  = visible ? '' : 'none';
     });
+};
+
+// Reclamations modal
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('rec-modal');
+    if (!modal) return;
+
+    document.querySelectorAll('.btn-voir').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id       = this.dataset.id;
+            const etudiant = this.dataset.etudiant;
+            const module   = this.dataset.module;
+            const note     = this.dataset.note;
+            const message  = this.dataset.message;
+
+            document.getElementById('modal-sub').textContent  = etudiant + ' — ' + module;
+            document.getElementById('modal-note').textContent = note ? parseFloat(note).toFixed(2) + ' / 20' : '—';
+            document.getElementById('modal-msg').textContent  = message;
+            document.getElementById('modal-rec-id').value     = id;
+            document.getElementById('rec-form').action        = modal.dataset.baseUrl + '/' + id;
+
+            modal.classList.add('active');
+        });
+    });
+});
+
+window.closeRecModal = function () {
+    const modal = document.getElementById('rec-modal');
+    if (modal) modal.classList.remove('active');
 };

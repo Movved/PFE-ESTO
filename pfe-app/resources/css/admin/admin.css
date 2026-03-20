@@ -263,3 +263,25 @@ select.admin-search-input { min-width: 160px; flex: 0; }
     margin-left: auto; 
     margin-right: auto; 
 }
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-note-row svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-3);
+    fill: none;
+    flex-shrink: 0;
+}
