@@ -14,14 +14,15 @@ class ReclamationController extends Controller
             ->join('NOTE',        'NOTE.id_note',         '=', 'RECLAMATION.id_note')
             ->join('ETUDIANT',    'ETUDIANT.id_etudiant', '=', 'NOTE.id_etudiant')
             ->join('Utilisateur', 'Utilisateur.id_user',  '=', 'ETUDIANT.id_user')
-            ->join('MODULE',     'MODULE.id_module',    '=', 'NOTE.id_module')
+            ->join('MODULE',      'MODULE.id_module',     '=', 'NOTE.id_module')
             ->select(
                 'RECLAMATION.id_reclamation',
                 'RECLAMATION.message',
                 'RECLAMATION.date_reclamation',
-                'Utilisateur.nom',
-                'Utilisateur.prenom',
-                'ETUDIANT.cne',
+                'RECLAMATION.statut',
+                'Utilisateur.nom    as nom_etudiant',
+                'Utilisateur.prenom as prenom_etudiant',
+                'ETUDIANT.cne       as cne_etudiant',
                 'MODULE.nom_module',
                 'MODULE.code_module',
                 'NOTE.note',
@@ -30,7 +31,11 @@ class ReclamationController extends Controller
             ->orderByDesc('RECLAMATION.date_reclamation')
             ->get();
 
-        return view('admin.reclamations', compact('reclamations'));
+        $pendingCount = DB::table('RECLAMATION')
+            ->where('statut', 'en_attente')
+            ->count();
+
+        return view('admin.reclamations', compact('reclamations', 'pendingCount'));
     }
 
     public function show($id)
@@ -39,7 +44,7 @@ class ReclamationController extends Controller
             ->join('NOTE',        'NOTE.id_note',         '=', 'RECLAMATION.id_note')
             ->join('ETUDIANT',    'ETUDIANT.id_etudiant', '=', 'NOTE.id_etudiant')
             ->join('Utilisateur', 'Utilisateur.id_user',  '=', 'ETUDIANT.id_user')
-            ->join('MODULE',     'MODULE.id_module',    '=', 'NOTE.id_module')
+            ->join('MODULE',      'MODULE.id_module',     '=', 'NOTE.id_module')
             ->where('RECLAMATION.id_reclamation', $id)
             ->select(
                 'RECLAMATION.*',
@@ -57,6 +62,26 @@ class ReclamationController extends Controller
         abort_if(!$reclamation, 404);
 
         return view('admin.reclamations_show', compact('reclamation'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        DB::table('RECLAMATION')
+            ->where('id_reclamation', $id)
+            ->update([
+                'statut'  => 'traitee',
+                'reponse' => $request->input('reponse'),
+            ]);
+
+        DB::table('LOG_ACTION')->insert([
+            'action'            => 'UPDATE',
+            'table_concernee'   => 'RECLAMATION',
+            'id_enregistrement' => $id,
+            'date_action'       => now(),
+            'id_user'           => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Réclamation marquée comme traitée.');
     }
 
     public function destroy($id)

@@ -22,14 +22,14 @@ class EtudiantController extends Controller
     {
         $etudiant = $this->getEtudiant();
 
-        $notes             = collect();
-        $recentNotes       = collect();
-        $reclamations      = collect();
-        $totalModules      = 0;
-        $notesCount        = 0;
-        $moyenne           = 0;
+        $notes = collect();
+        $recentNotes = collect();
+        $reclamations = collect();
+        $totalModules = 0;
+        $notesCount = 0;
+        $moyenne = 0;
         $reclamationsCount = 0;
-        $pendingCount      = 0;
+        $pendingCount = 0;
 
         if ($etudiant) {
             $notes = DB::table('NOTE')
@@ -42,17 +42,22 @@ class EtudiantController extends Controller
                     'NOTE.rattrapage',
                     'MODULE.code_module',
                     'MODULE.nom_module',
-                    DB::raw('COUNT(RECLAMATION.id_reclamation) > 0 AS has_reclamation')
+                    DB::raw('COUNT(RECLAMATION.id_reclamation) > 0 AS has_reclamation'),
+                    DB::raw('MAX(RECLAMATION.statut) as reclamation_statut'),
+                    DB::raw('MAX(RECLAMATION.reponse) as reclamation_reponse')
                 )
                 ->groupBy(
-                    'NOTE.id_note', 'NOTE.note', 'NOTE.rattrapage',
-                    'MODULE.code_module', 'MODULE.nom_module'
+                    'NOTE.id_note',
+                    'NOTE.note',
+                    'NOTE.rattrapage',
+                    'MODULE.code_module',
+                    'MODULE.nom_module'
                 )
                 ->get();
 
             $totalModules = $notes->count();
-            $notesCount   = $notes->whereNotNull('note')->count();
-            $moyenne      = $notesCount > 0
+            $notesCount = $notes->whereNotNull('note')->count();
+            $moyenne = $notesCount > 0
                 ? $notes->whereNotNull('note')->avg('note')
                 : 0;
 
@@ -66,20 +71,26 @@ class EtudiantController extends Controller
                     'RECLAMATION.id_reclamation',
                     'RECLAMATION.message',
                     'RECLAMATION.date_reclamation',
-                    'RECLAMATION.statut',        
+                    'RECLAMATION.statut',
                     'MODULE.nom_module'
                 )
                 ->orderByDesc('RECLAMATION.date_reclamation')
                 ->get();
 
             $reclamationsCount = $reclamations->count();
-            $pendingCount      = $reclamations->where('statut', 'en_attente')->count(); // ← use statut now
+            $pendingCount = $reclamations->where('statut', 'en_attente')->count(); // ← use statut now
         }
 
         return view('etudiant.dashboard', compact(
-            'etudiant', 'notes', 'recentNotes', 'reclamations',
-            'totalModules', 'notesCount', 'moyenne',
-            'reclamationsCount', 'pendingCount'
+            'etudiant',
+            'notes',
+            'recentNotes',
+            'reclamations',
+            'totalModules',
+            'notesCount',
+            'moyenne',
+            'reclamationsCount',
+            'pendingCount'
         ));
     }
 
@@ -104,11 +115,16 @@ class EtudiantController extends Controller
                 'NOTE.rattrapage',
                 'MODULE.code_module',
                 'MODULE.nom_module',
-                DB::raw('COUNT(RECLAMATION.id_reclamation) > 0 AS has_reclamation')
-            )
+                DB::raw('COUNT(RECLAMATION.id_reclamation) > 0 AS has_reclamation'),
+                DB::raw('MAX(RECLAMATION.statut) as reclamation_statut'),
+                DB::raw('MAX(RECLAMATION.reponse) as reclamation_reponse')
+                )
             ->groupBy(
-                'NOTE.id_note', 'NOTE.note', 'NOTE.rattrapage',
-                'MODULE.code_module', 'MODULE.nom_module'
+                'NOTE.id_note',
+                'NOTE.note',
+                'NOTE.rattrapage',
+                'MODULE.code_module',
+                'MODULE.nom_module'
             )
             ->get();
 
@@ -149,8 +165,8 @@ class EtudiantController extends Controller
         }
 
         DB::table('RECLAMATION')->insert([
-            'id_note'          => $request->id_note,
-            'message'          => $request->message,
+            'id_note' => $request->id_note,
+            'message' => $request->message,
             'date_reclamation' => now(),
         ]);
 

@@ -340,6 +340,7 @@ class EnseignantController extends Controller
                     'etudiant.cne       as cne_etudiant'
                 )
                 ->orderByDesc('reclamation.date_reclamation')
+                ->where('reclamation.statut', 'en_attente')
                 ->get();
         }
 
@@ -362,8 +363,11 @@ class EnseignantController extends Controller
         if (!$rec) abort(404, 'Réclamation introuvable.');
 
         DB::table('reclamation')
-            ->where('id_reclamation', $id)
-            ->update(['statut' => 'traitee']);
+        ->where('id_reclamation', $id)
+        ->update([
+            'statut'  => 'traitee',
+            'reponse' => $request->input('reponse'),
+        ]);
 
         return back()->with('success', 'Réclamation marquée comme traitée.');
     }
