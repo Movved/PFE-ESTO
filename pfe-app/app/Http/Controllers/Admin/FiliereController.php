@@ -10,10 +10,10 @@ class FiliereController extends Controller
 {
     public function index()
     {
+        // SEMESTRE maintenant a id_filiere directement mb9atch annee_academique.id_filiere
         $filieres = DB::table('filiere as f')
             ->join('departement as d', 'd.id_departement', '=', 'f.id_departement')
-            ->leftJoin('annee_academique as a', 'a.id_filiere', '=', 'f.id_filiere')
-            ->leftJoin('semestre as s', 's.id_annee', '=', 'a.id_annee')
+            ->leftJoin('semestre as s', 's.id_filiere', '=', 'f.id_filiere')
             ->leftJoin('inscrire as i', 'i.id_semestre', '=', 's.id_semestre')
             ->select(
                 'f.id_filiere', 'f.nom_filiere', 'f.description',

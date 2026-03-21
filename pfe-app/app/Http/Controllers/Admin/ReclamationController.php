@@ -10,24 +10,20 @@ class ReclamationController extends Controller
 {
     public function index()
     {
-        $reclamations = DB::table('RECLAMATION')
-            ->join('NOTE',        'NOTE.id_note',         '=', 'RECLAMATION.id_note')
-            ->join('ETUDIANT',    'ETUDIANT.id_etudiant', '=', 'NOTE.id_etudiant')
-            ->join('Utilisateur', 'Utilisateur.id_user',  '=', 'ETUDIANT.id_user')
-            ->join('MODULE',     'MODULE.id_module',    '=', 'NOTE.id_module')
+        $reclamations = DB::table('reclamation as r')
+            ->join('note as n',        'n.id_note',       '=', 'r.id_note')
+            ->join('etudiant as et',   'et.id_etudiant',  '=', 'n.id_etudiant')
+            ->join('utilisateur as u', 'u.id_user',       '=', 'et.id_user')
+            ->join('module as m',      'm.id_module',     '=', 'n.id_module')
             ->select(
-                'RECLAMATION.id_reclamation',
-                'RECLAMATION.message',
-                'RECLAMATION.date_reclamation',
-                'Utilisateur.nom',
-                'Utilisateur.prenom',
-                'ETUDIANT.cne',
-                'MODULE.nom_module',
-                'MODULE.code_module',
-                'NOTE.note',
-                'NOTE.rattrapage'
+                'r.id_reclamation', 'r.message', 'r.date_reclamation', 'r.statut',
+                'r.id_note',
+                'n.note', 'n.rattrapage',
+                'u.nom', 'u.prenom',
+                'et.cne',
+                'm.nom_module', 'm.code_module'
             )
-            ->orderByDesc('RECLAMATION.date_reclamation')
+            ->orderBy('r.date_reclamation', 'desc')
             ->get();
 
         return view('admin.reclamations', compact('reclamations'));
@@ -35,23 +31,20 @@ class ReclamationController extends Controller
 
     public function show($id)
     {
-        $reclamation = DB::table('RECLAMATION')
-            ->join('NOTE',        'NOTE.id_note',         '=', 'RECLAMATION.id_note')
-            ->join('ETUDIANT',    'ETUDIANT.id_etudiant', '=', 'NOTE.id_etudiant')
-            ->join('Utilisateur', 'Utilisateur.id_user',  '=', 'ETUDIANT.id_user')
-            ->join('MODULE',     'MODULE.id_module',    '=', 'NOTE.id_module')
-            ->where('RECLAMATION.id_reclamation', $id)
+        $reclamation = DB::table('reclamation as r')
+            ->join('note as n',        'n.id_note',       '=', 'r.id_note')
+            ->join('etudiant as et',   'et.id_etudiant',  '=', 'n.id_etudiant')
+            ->join('utilisateur as u', 'u.id_user',       '=', 'et.id_user')
+            ->join('module as m',      'm.id_module',     '=', 'n.id_module')
             ->select(
-                'RECLAMATION.*',
-                'Utilisateur.nom',
-                'Utilisateur.prenom',
-                'ETUDIANT.cne',
-                'MODULE.nom_module',
-                'MODULE.code_module',
-                'NOTE.id_note',
-                'NOTE.note',
-                'NOTE.rattrapage'
+                'r.id_reclamation', 'r.message', 'r.date_reclamation', 'r.statut',
+                'r.id_note',
+                'n.note', 'n.rattrapage',
+                'u.nom', 'u.prenom',
+                'et.cne',
+                'm.nom_module', 'm.code_module'
             )
+            ->where('r.id_reclamation', $id)
             ->first();
 
         abort_if(!$reclamation, 404);
@@ -59,18 +52,31 @@ class ReclamationController extends Controller
         return view('admin.reclamations_show', compact('reclamation'));
     }
 
-    public function destroy($id)
+    public function updateStatut(Request $request, $id)
     {
-        DB::table('RECLAMATION')->where('id_reclamation', $id)->delete();
-
-        DB::table('LOG_ACTION')->insert([
-            'action'            => 'DELETE',
-            'table_concernee'   => 'RECLAMATION',
-            'id_enregistrement' => $id,
-            'date_action'       => now(),
-            'id_user'           => auth()->id(),
+        $request->validate([
+            'statut' => 'required|in:en_attente,traitee,rejetee',
         ]);
 
+        DB::table('reclamation')->where('id_reclamation', $id)->update([
+            'statut' => $request->statut,
+        ]);
+
+        DB::table('log_action')->insert([
+            'action'            => 'UPDATE',
+            'table_concernee'   => 'reclamation',
+            'id_enregistrement' => $id,
+            'date_action'       => now(),
+            'id_user'           => auth()->user()->id_user,
+        ]);
+
+        return redirect()->route('admin.reclamations.show', $id)->with('success', 'Statut mis à jour.');
+    }
+
+    public function destroy($id)
+    {
+        DB::table('reclamation')->where('id_reclamation', $id)->delete();
+        DB::table('log_action')->insert(['action' => 'DELETE', 'table_concernee' => 'reclamation', 'id_enregistrement' => $id, 'date_action' => now(), 'id_user' => auth()->user()->id_user]);
         return redirect()->route('admin.reclamations')->with('success', 'Réclamation supprimée.');
     }
 }

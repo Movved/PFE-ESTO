@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-<script>
+    <script>
         if (localStorage.getItem('theme') === 'dark' ||
             (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -12,6 +13,7 @@
     <title>Profil</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body>
 
     @if(Auth::user()->role === 'ETUDIANT')
@@ -43,33 +45,37 @@
                 <div class="card-body">
                     @if(session('status') === 'profile-updated')
                         <div class="alert alert-success">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                <polyline points="22 4 12 14.01 9 11.01" />
                             </svg>
                             Profil mis à jour avec succès.
                         </div>
                     @endif
 
-                    <form method="post" action="{{ route('profile.password.update') }}">
+                    <form method="post" action="{{ route('profile.update') }}">
                         @csrf
                         @method('patch')
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label" for="prenom">Prénom</label>
-                                <input type="text" id="prenom" name="prenom" value="{{ old('prenom', Auth::user()->prenom) }}" required>
+                                <input type="text" id="prenom" name="prenom"
+                                    value="{{ old('prenom', Auth::user()->prenom) }}" required>
                                 @error('prenom')<span class="form-error">{{ $message }}</span>@enderror
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="nom">Nom</label>
-                                <input type="text" id="nom" name="nom" value="{{ old('nom', Auth::user()->nom) }}" required>
+                                <input type="text" id="nom" name="nom" value="{{ old('nom', Auth::user()->nom) }}"
+                                    required>
                                 @error('nom')<span class="form-error">{{ $message }}</span>@enderror
                             </div>
                         </div>
                         <div class="form-row single">
                             <div class="form-group">
                                 <label class="form-label" for="email">Adresse e-mail</label>
-                                <input type="email" id="email" name="email" value="{{ old('email', Auth::user()->email) }}" required>
+                                <input type="email" id="email" name="email"
+                                    value="{{ old('email', Auth::user()->email) }}" required>
                                 @error('email')<span class="form-error">{{ $message }}</span>@enderror
                             </div>
                         </div>
@@ -91,9 +97,10 @@
                 <div class="card-body">
                     @if(session('status') === 'password-updated')
                         <div class="alert alert-success">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                <polyline points="22 4 12 14.01 9 11.01" />
                             </svg>
                             Mot de passe mis à jour.
                         </div>
@@ -105,19 +112,22 @@
                         <div class="form-row single">
                             <div class="form-group">
                                 <label class="form-label" for="current_password">Mot de passe actuel</label>
-                                <input type="password" id="current_password" name="current_password" autocomplete="current-password" placeholder="••••••••">
+                                <input type="password" id="current_password" name="current_password"
+                                    autocomplete="current-password" placeholder="••••••••">
                                 @error('current_password')<span class="form-error">{{ $message }}</span>@enderror
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label" for="password">Nouveau mot de passe</label>
-                                <input type="password" id="password" name="password" autocomplete="new-password" placeholder="••••••••">
+                                <input type="password" id="password" name="password" autocomplete="new-password"
+                                    placeholder="••••••••">
                                 @error('password')<span class="form-error">{{ $message }}</span>@enderror
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="password_confirmation">Confirmer le mot de passe</label>
-                                <input type="password" id="password_confirmation" name="password_confirmation" autocomplete="new-password" placeholder="••••••••">
+                                <input type="password" id="password_confirmation" name="password_confirmation"
+                                    autocomplete="new-password" placeholder="••••••••">
                             </div>
                         </div>
                         <div class="form-actions">
@@ -148,4 +158,5 @@
                 </div>
             </div>
 </body>
+
 </html>

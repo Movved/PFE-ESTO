@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <script>
         if (localStorage.getItem('theme') === 'dark' ||
@@ -9,110 +10,99 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin — Enseignants</title>
+    <title>Admin — Ajouter Enseignant</title>
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/admin/admin.css', 'resources/js/admin/admin.js'])
 </head>
+
 <body>
     @include('layouts.sidebar-admin')
 
     <div class="main" id="main-content">
-        @include('layouts.topbar', [
-            'title'             => 'Enseignants',
-            'search'            => true,
-            'searchPlaceholder' => 'Rechercher un enseignant...',
-        ])
+        @include('layouts.topbar', ['title' => 'Ajouter un enseignant'])
 
         <main class="content">
-            @if(session('success'))
-                <div class="alert alert-success">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                        <polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
-                    {{ session('success') }}
-                </div>
-            @endif
 
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Enseignants</div>
-                        <div class="card-sub">{{ $enseignants->count() }} enseignant(s) enregistré(s)</div>
-                    </div>
-                    <a href="{{ route('admin.enseignants.create') }}" class="btn btn-primary">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                            <line x1="12" y1="5" x2="12" y2="19"/>
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                        Ajouter un enseignant
-                    </a>
-                </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Enseignant</th>
-                                <th>Spécialité</th>
-                                <th>Département</th>
-                                <th>Rôle</th>
-                                <th>Statut</th>
-                                <th class="center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($enseignants as $e)
-                                <tr>
-                                    <td>
-                                        <div class="etu-cell">
-                                            <div class="user-avatar-small">
-                                                {{ strtoupper(substr($e->prenom, 0, 1)) }}{{ strtoupper(substr($e->nom, 0, 1)) }}
-                                            </div>
-                                            <div>
-                                                <div class="etu-name">{{ $e->prenom }} {{ $e->nom }}</div>
-                                                <div class="cell-secondary">{{ $e->email }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cell-secondary">{{ $e->specialite }}</td>
-                                    <td class="cell-secondary">{{ $e->nom_departement }}</td>
-                                    <td>
-                                        @if($e->is_chef)
-                                            <span class="badge badge-pending"><span class="badge-dot"></span>Chef</span>
-                                        @else
-                                            <span class="cell-secondary">Enseignant</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($e->actif)
-                                            <span class="badge badge-open"><span class="badge-dot"></span>Actif</span>
-                                        @else
-                                            <span class="badge badge-closed"><span class="badge-dot"></span>Inactif</span>
-                                        @endif
-                                    </td>
-                                    <td class="center">
-                                        <div class="action-group action-group--center">
-                                            <a href="{{ route('admin.enseignants.edit', $e->id_enseignant) }}" class="btn btn-secondary btn-sm">
-                                                Modifier
-                                            </a>
-                                            <form method="POST" action="{{ route('admin.enseignants.destroy', $e->id_enseignant) }}" onsubmit="return confirm('Supprimer cet enseignant ?')">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6">
-                                        <div class="empty-state">Aucun enseignant trouvé.</div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+<a href="{{ route('admin.enseignants') }}" class="module-back" style="color:inherit; justify-content:center;">                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" width="16" height="16">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Retour aux enseignants
+            </a>
+
+            <div class="module-header">
+                <div>
+                    <h1 class="module-title">Nouvel enseignant</h1>
+                    <span class="cell-secondary">Créer un nouveau compte enseignant</span>
                 </div>
             </div>
+
+            <div class="card" style="max-width:640px;">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Informations du compte</div>
+                        <div class="card-sub">Renseigner les informations de l'enseignant</div>
+                    </div>
+                </div>
+                <form method="POST" action="{{ route('admin.enseignants.store') }}">
+                    @csrf
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" name="prenom" value="{{ old('prenom') }}" placeholder="Youssef">
+                                @error('prenom')<span class="form-error">{{ $message }}</span>@enderror
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nom</label>
+                                <input type="text" name="nom" value="{{ old('nom') }}" placeholder="Benali">
+                                @error('nom')<span class="form-error">{{ $message }}</span>@enderror
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" value="{{ old('email') }}"
+                                placeholder="y.benali@ump.ac.ma">
+                            @error('email')<span class="form-error">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Spécialité</label>
+                            <input type="text" name="specialite" value="{{ old('specialite') }}"
+                                placeholder="Informatique">
+                            @error('specialite')<span class="form-error">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Département</label>
+                            <select name="id_departement">
+                                <option value="">-- Choisir un département --</option>
+                                @foreach($departements as $d)
+                                    <option value="{{ $d->id_departement }}" {{ old('id_departement') == $d->id_departement ? 'selected' : '' }}>
+                                        {{ $d->nom_departement }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_departement')<span class="form-error">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                <input type="checkbox" name="is_chef" value="1" {{ old('is_chef') ? 'checked' : '' }}>
+                                Chef de département
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mot de passe</label>
+                            <input type="password" name="mot_de_passe" placeholder="••••••••">
+                            @error('mot_de_passe')<span class="form-error">{{ $message }}</span>@enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{{ route('admin.enseignants') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary">Créer l'enseignant</button>
+                    </div>
+                </form>
+            </div>
+
         </main>
     </div>
 </body>
+
 </html>

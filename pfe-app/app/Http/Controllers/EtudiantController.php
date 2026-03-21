@@ -66,13 +66,14 @@ class EtudiantController extends Controller
                     'RECLAMATION.id_reclamation',
                     'RECLAMATION.message',
                     'RECLAMATION.date_reclamation',
+                    'RECLAMATION.statut',        
                     'MODULE.nom_module'
                 )
                 ->orderByDesc('RECLAMATION.date_reclamation')
                 ->get();
 
             $reclamationsCount = $reclamations->count();
-            $pendingCount      = $reclamationsCount;
+            $pendingCount      = $reclamations->where('statut', 'en_attente')->count(); // ← use statut now
         }
 
         return view('etudiant.dashboard', compact(
@@ -154,43 +155,43 @@ class EtudiantController extends Controller
         ]);
 
         return back()->with('success', 'Réclamation envoyée avec succès.');
-        
     }
+
     /**
-     * Mes cours pagee
+     * Mes cours page
      */
     public function cours()
-{
-    $etudiant = $this->getEtudiant();
+    {
+        $etudiant = $this->getEtudiant();
 
-    if (!$etudiant) {
-        abort(403, 'Accès refusé : utilisateur non étudiant.');
+        if (!$etudiant) {
+            abort(403, 'Accès refusé : utilisateur non étudiant.');
+        }
+
+        $cours = DB::table('inscrire')
+            ->join('SEMESTRE', 'inscrire.id_semestre', '=', 'SEMESTRE.id_semestre')
+            ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('MODULE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
+            ->join('ENSEIGNANT', 'MODULE.id_enseignant', '=', 'ENSEIGNANT.id_enseignant')
+            ->join('Utilisateur', 'ENSEIGNANT.id_user', '=', 'Utilisateur.id_user')
+            ->where('inscrire.id_etudiant', $etudiant->id_etudiant)
+            ->select(
+                'MODULE.id_module',
+                'MODULE.code_module',
+                'MODULE.nom_module',
+                'SEMESTRE.numero as semestre_numero',
+                'SEMESTRE.cloture',
+                'ANNEE_ACADEMIQUE.libelle as annee',
+                'FILIERE.nom_filiere',
+                'Utilisateur.nom as prof_nom',
+                'Utilisateur.prenom as prof_prenom',
+                'ENSEIGNANT.specialite'
+            )
+            ->orderBy('SEMESTRE.numero')
+            ->get()
+            ->groupBy('semestre_numero');
+
+        return view('etudiant.cours', compact('cours'));
     }
-
-    $cours = DB::table('inscrire')
-        ->join('SEMESTRE', 'inscrire.id_semestre', '=', 'SEMESTRE.id_semestre')
-        ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-        ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
-        ->join('MODULE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
-        ->join('ENSEIGNANT', 'MODULE.id_enseignant', '=', 'ENSEIGNANT.id_enseignant')
-        ->join('Utilisateur', 'ENSEIGNANT.id_user', '=', 'Utilisateur.id_user')
-        ->where('inscrire.id_etudiant', $etudiant->id_etudiant)
-        ->select(
-            'MODULE.id_module',
-            'MODULE.code_module',
-            'MODULE.nom_module',
-            'SEMESTRE.numero as semestre_numero',
-            'SEMESTRE.cloture',
-            'ANNEE_ACADEMIQUE.libelle as annee',
-            'FILIERE.nom_filiere',
-            'Utilisateur.nom as prof_nom',
-            'Utilisateur.prenom as prof_prenom',
-            'ENSEIGNANT.specialite'
-        )
-        ->orderBy('SEMESTRE.numero')
-        ->get()
-        ->groupBy('semestre_numero');
-
-    return view('etudiant.cours', compact('cours'));
-}
 }

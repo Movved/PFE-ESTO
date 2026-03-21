@@ -1,6 +1,9 @@
 CREATE DATABASE IF NOT EXISTS pfe_app;
 USE pfe_app;
 
+-- =========================
+-- UTILISATEUR
+-- =========================
 CREATE TABLE Utilisateur(
    id_user INT AUTO_INCREMENT,
    nom VARCHAR(40) NOT NULL,
@@ -13,6 +16,9 @@ CREATE TABLE Utilisateur(
    PRIMARY KEY(id_user)
 );
 
+-- =========================
+-- ETUDIANT
+-- =========================
 CREATE TABLE ETUDIANT(
    id_etudiant INT AUTO_INCREMENT,
    cne VARCHAR(20) NOT NULL,
@@ -23,15 +29,21 @@ CREATE TABLE ETUDIANT(
    FOREIGN KEY(id_user) REFERENCES Utilisateur(id_user)
 );
 
+-- =========================
+-- DEPARTEMENT
+-- =========================
 CREATE TABLE DEPARTEMENT(
    id_departement INT AUTO_INCREMENT,
    nom_departement VARCHAR(50) NOT NULL,
    PRIMARY KEY(id_departement)
 );
 
+-- =========================
+-- ENSEIGNANT
+-- =========================
 CREATE TABLE ENSEIGNANT(
    id_enseignant INT AUTO_INCREMENT,
-   specialite VARCHAR(50) NOT NULL,
+   specialite VARCHAR(100) NOT NULL,
    is_chef BOOLEAN NOT NULL,
    id_departement INT NOT NULL,
    id_user INT NOT NULL,
@@ -41,9 +53,12 @@ CREATE TABLE ENSEIGNANT(
    FOREIGN KEY(id_user) REFERENCES Utilisateur(id_user)
 );
 
+-- =========================
+-- FILIERE
+-- =========================
 CREATE TABLE FILIERE(
    id_filiere INT AUTO_INCREMENT,
-   nom_filiere VARCHAR(50) NOT NULL,
+   nom_filiere VARCHAR(255) NOT NULL,
    description TEXT NOT NULL,
    id_departement INT NOT NULL,
    PRIMARY KEY(id_filiere),
@@ -51,27 +66,47 @@ CREATE TABLE FILIERE(
    FOREIGN KEY(id_departement) REFERENCES DEPARTEMENT(id_departement)
 );
 
+-- =========================
+-- ANNEE ACADEMIQUE
+-- =========================
 CREATE TABLE ANNEE_ACADEMIQUE(
    id_annee INT AUTO_INCREMENT,
    libelle VARCHAR(20) NOT NULL,
-   id_filiere INT NOT NULL,
-   PRIMARY KEY(id_annee),
-   FOREIGN KEY(id_filiere) REFERENCES FILIERE(id_filiere)
+   PRIMARY KEY(id_annee)
 );
 
+-- =========================
+-- FILIERE - ANNEE (M:N)
+-- =========================
+CREATE TABLE filiere_annee(
+   id_filiere INT,
+   id_annee INT,
+   PRIMARY KEY(id_filiere, id_annee),
+   FOREIGN KEY(id_filiere) REFERENCES FILIERE(id_filiere),
+   FOREIGN KEY(id_annee) REFERENCES ANNEE_ACADEMIQUE(id_annee)
+);
+
+-- =========================
+-- SEMESTRE 
+-- =========================
 CREATE TABLE SEMESTRE(
    id_semestre INT AUTO_INCREMENT,
    numero INT NOT NULL,
    cloture BOOLEAN NOT NULL,
    id_annee INT NOT NULL,
+   id_filiere INT NOT NULL,
    PRIMARY KEY(id_semestre),
-   FOREIGN KEY(id_annee) REFERENCES ANNEE_ACADEMIQUE(id_annee)
+   FOREIGN KEY(id_annee) REFERENCES ANNEE_ACADEMIQUE(id_annee),
+   FOREIGN KEY(id_filiere) REFERENCES FILIERE(id_filiere)
 );
 
+-- =========================
+-- MODULE
+-- =========================
 CREATE TABLE MODULE(
    id_module INT AUTO_INCREMENT,
    code_module VARCHAR(20) NOT NULL,
-   nom_module VARCHAR(50) NOT NULL,
+   nom_module VARCHAR(255) NOT NULL,
    id_semestre INT NOT NULL,
    id_enseignant INT NOT NULL,
    PRIMARY KEY(id_module),
@@ -79,6 +114,9 @@ CREATE TABLE MODULE(
    FOREIGN KEY(id_enseignant) REFERENCES ENSEIGNANT(id_enseignant)
 );
 
+-- =========================
+-- NOTE
+-- =========================
 CREATE TABLE NOTE(
    id_note INT AUTO_INCREMENT,
    note DECIMAL(4,2),
@@ -88,37 +126,51 @@ CREATE TABLE NOTE(
    PRIMARY KEY(id_note),
    UNIQUE(id_etudiant, id_module),
    FOREIGN KEY(id_etudiant) REFERENCES ETUDIANT(id_etudiant),
-   FOREIGN KEY(id_module) REFERENCES MODULE_(id_module)
+   FOREIGN KEY(id_module) REFERENCES MODULE(id_module)
 );
 
+-- =========================
+-- RECLAMATION
+-- =========================
 CREATE TABLE RECLAMATION(
    id_reclamation INT AUTO_INCREMENT,
    message TEXT,
-   date_reclamation DATETIME,
+   date_reclamation DATETIME DEFAULT CURRENT_TIMESTAMP,
+   statut VARCHAR(50) NOT NULL DEFAULT 'en_attente',
    id_note INT NOT NULL,
+   reponse TEXT DEFAULT NULL,
    PRIMARY KEY(id_reclamation),
    FOREIGN KEY(id_note) REFERENCES NOTE(id_note)
 );
 
+-- =========================
+-- LOG ACTION
+-- =========================
 CREATE TABLE LOG_ACTION(
    id_logs INT AUTO_INCREMENT,
    action VARCHAR(100) NOT NULL,
    table_concernee VARCHAR(50) NOT NULL,
    id_enregistrement INT NOT NULL,
-   date_action DATETIME NOT NULL,
+   date_action DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    id_user INT NOT NULL,
    PRIMARY KEY(id_logs),
    FOREIGN KEY(id_user) REFERENCES Utilisateur(id_user)
 );
 
+-- =========================
+-- INTERVENIR 
+-- =========================
 CREATE TABLE intervenir(
    id_enseignant INT,
    id_module INT,
    PRIMARY KEY(id_enseignant, id_module),
    FOREIGN KEY(id_enseignant) REFERENCES ENSEIGNANT(id_enseignant),
-   FOREIGN KEY(id_module) REFERENCES MODULE_(id_module)
+   FOREIGN KEY(id_module) REFERENCES MODULE(id_module)
 );
 
+-- =========================
+-- INSCRIRE 
+-- =========================
 CREATE TABLE inscrire(
    id_etudiant INT,
    id_semestre INT,

@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\ReclamationController as AdminReclamation;
 use App\Http\Controllers\Admin\LogController         as AdminLog;
 use App\Http\Controllers\Admin\FiliereController     as AdminFiliere;
 use App\Http\Controllers\Admin\ModuleController      as AdminModule;
-use App\Http\Controllers\Admin\SemestreController    as AdminSemestre;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChefController;
 
@@ -62,13 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/modules/{id}',      [AdminModule::class, 'update'])->name('modules.update');
         Route::delete('/modules/{id}',   [AdminModule::class, 'destroy'])->name('modules.destroy');
 
-        // Semestres
-        Route::get('/semestres',           [AdminSemestre::class, 'index'])->name('semestres');
-        Route::get('/semestres/create',    [AdminSemestre::class, 'create'])->name('semestres.create');
-        Route::post('/semestres',          [AdminSemestre::class, 'store'])->name('semestres.store');
-        Route::get('/semestres/{id}/edit', [AdminSemestre::class, 'edit'])->name('semestres.edit');
-        Route::put('/semestres/{id}',      [AdminSemestre::class, 'update'])->name('semestres.update');
-        Route::delete('/semestres/{id}',   [AdminSemestre::class, 'destroy'])->name('semestres.destroy');
+
 
         // Notes
         Route::get('/notes',           [AdminNote::class, 'index'])->name('notes');
@@ -76,9 +70,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/notes/{id}',      [AdminNote::class, 'update'])->name('notes.update');
 
         // Reclamations
-        Route::get('/reclamations',         [AdminReclamation::class, 'index'])->name('reclamations');
-        Route::get('/reclamations/{id}',    [AdminReclamation::class, 'show'])->name('reclamations.show');
-        Route::delete('/reclamations/{id}', [AdminReclamation::class, 'destroy'])->name('reclamations.destroy');
+        Route::get('/reclamations',              [AdminReclamation::class, 'index'])->name('reclamations');
+    Route::get('/reclamations/{id}',         [AdminReclamation::class, 'show'])->name('reclamations.show');
+    Route::put('/reclamations/{id}/statut',  [AdminReclamation::class, 'updateStatut'])->name('reclamations.statut');  
+    Route::delete('/reclamations/{id}',      [AdminReclamation::class, 'destroy'])->name('reclamations.destroy');
 
         // Logs
         Route::get('/logs', [AdminLog::class, 'index'])->name('logs');
@@ -108,18 +103,25 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile',       [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
+
+    // Pour chef de departement
+    Route::get('/chef/dashboard', [ChefController::class, 'dashboard'])->name('chef.dashboard');
+    Route::get('/chef/modules', [ChefController::class, 'modules'])->name('chef.modules');
+    Route::post('/chef/modules', [ChefController::class, 'storeModule'])->name('chef.modules.store');
+    Route::put('/chef/modules/{id}', [ChefController::class, 'updateModule'])->name('chef.modules.update');
+    Route::delete('/chef/modules/{id}', [ChefController::class, 'deleteModule'])->name('chef.modules.delete');
+    Route::get('/chef/filieres', [ChefController::class, 'filieres'])->name('chef.filieres');
+    Route::post('/chef/filieres', [ChefController::class, 'storeFiliere'])->name('chef.filieres.store');
+    Route::put('/chef/filieres/{id}', [ChefController::class, 'updateFiliere'])->name('chef.filieres.update');
+    Route::delete('/chef/filieres/{id}', [ChefController::class, 'deleteFiliere'])->name('chef.filieres.delete');
+    Route::get('/chef/etudiants', [ChefController::class, 'etudiants'])->name('chef.etudiants');
+    Route::get('/chef/etudiants/{id}/notes', [ChefController::class, 'etudiantNotes'])->name('chef.etudiant.notes');
+
+    
+
+    
+    
+
 });
-// Pour chef de departement
-Route::get('/chef/dashboard', [ChefController::class, 'dashboard'])->name('chef.dashboard');
-Route::get('/chef/modules', [ChefController::class, 'modules'])->name('chef.modules');
-Route::post('/chef/modules', [ChefController::class, 'storeModule'])->name('chef.modules.store');
-Route::put('/chef/modules/{id}', [ChefController::class, 'updateModule'])->name('chef.modules.update');
-Route::delete('/chef/modules/{id}', [ChefController::class, 'deleteModule'])->name('chef.modules.delete');
-Route::get('/chef/filieres', [ChefController::class, 'filieres'])->name('chef.filieres');
-Route::post('/chef/filieres', [ChefController::class, 'storeFiliere'])->name('chef.filieres.store');
-Route::put('/chef/filieres/{id}', [ChefController::class, 'updateFiliere'])->name('chef.filieres.update');
-Route::delete('/chef/filieres/{id}', [ChefController::class, 'deleteFiliere'])->name('chef.filieres.delete');
-Route::get('/chef/etudiants', [ChefController::class, 'etudiants'])->name('chef.etudiants');
-Route::get('/chef/etudiants/{id}/notes', [ChefController::class, 'etudiantNotes'])->name('chef.etudiant.notes');
 
 require __DIR__ . '/auth.php';

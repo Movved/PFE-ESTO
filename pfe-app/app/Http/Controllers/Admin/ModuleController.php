@@ -10,12 +10,13 @@ class ModuleController extends Controller
 {
     public function index(Request $request)
     {
+        // SEMESTRE has id_filiere directly now — no need to go through annee_academique for filiere
         $query = DB::table('module as m')
-            ->join('semestre as s',         's.id_semestre', '=', 'm.id_semestre')
-            ->join('annee_academique as a',  'a.id_annee',    '=', 's.id_annee')
-            ->join('filiere as f',           'f.id_filiere',  '=', 'a.id_filiere')
-            ->leftJoin('enseignant as e',    'e.id_enseignant', '=', 'm.id_enseignant')
-            ->leftJoin('utilisateur as u',   'u.id_user',     '=', 'e.id_user')
+            ->join('semestre as s',        's.id_semestre', '=', 'm.id_semestre')
+            ->join('annee_academique as a', 'a.id_annee',   '=', 's.id_annee')
+            ->join('filiere as f',          'f.id_filiere', '=', 's.id_filiere')
+            ->leftJoin('enseignant as e',   'e.id_enseignant', '=', 'm.id_enseignant')
+            ->leftJoin('utilisateur as u',  'u.id_user',    '=', 'e.id_user')
             ->select(
                 'm.id_module', 'm.code_module', 'm.nom_module',
                 'm.id_semestre', 'm.id_enseignant',
@@ -26,7 +27,7 @@ class ModuleController extends Controller
             );
 
         if ($request->filled('filiere')) {
-            $query->where('f.id_filiere', $request->filiere);
+            $query->where('s.id_filiere', $request->filiere);
         }
         if ($request->filled('search')) {
             $query->where(fn($q) => $q->where('m.nom_module', 'like', '%'.$request->search.'%')
@@ -36,9 +37,10 @@ class ModuleController extends Controller
         $modules  = $query->orderBy('f.nom_filiere')->orderBy('s.numero')->orderBy('m.nom_module')->get();
         $filieres = DB::table('filiere')->orderBy('nom_filiere')->get();
 
+        // Semestres now joined with filiere directly
         $semestres = DB::table('semestre as s')
             ->join('annee_academique as a', 'a.id_annee',   '=', 's.id_annee')
-            ->join('filiere as f',          'f.id_filiere', '=', 'a.id_filiere')
+            ->join('filiere as f',          'f.id_filiere', '=', 's.id_filiere')
             ->select('s.id_semestre', 's.numero', 'a.libelle', 'f.nom_filiere')
             ->orderBy('f.nom_filiere')->orderBy('a.libelle')->orderBy('s.numero')
             ->get();
@@ -56,7 +58,7 @@ class ModuleController extends Controller
     {
         $request->validate([
             'code_module'   => 'required|string|max:20|unique:module,code_module',
-            'nom_module'    => 'required|string|max:100',
+            'nom_module'    => 'required|string|max:255',
             'id_semestre'   => 'required|exists:semestre,id_semestre',
             'id_enseignant' => 'nullable|exists:enseignant,id_enseignant',
         ]);
@@ -77,7 +79,7 @@ class ModuleController extends Controller
     {
         $request->validate([
             'code_module'   => 'required|string|max:20|unique:module,code_module,'.$id.',id_module',
-            'nom_module'    => 'required|string|max:100',
+            'nom_module'    => 'required|string|max:255',
             'id_semestre'   => 'required|exists:semestre,id_semestre',
             'id_enseignant' => 'nullable|exists:enseignant,id_enseignant',
         ]);

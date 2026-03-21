@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class ChefController extends Controller
 {
-    /**
-     * Get the chef's enseignant record and verify is_chef = 1
-     */
     private function getChef()
     {
         $chef = DB::table('ENSEIGNANT')
@@ -24,24 +21,18 @@ class ChefController extends Controller
         return $chef;
     }
 
-    /**
-     * Get pending reclamations count for the chef's department
-     */
     private function getPendingCount($chef)
     {
         return DB::table('RECLAMATION')
             ->join('NOTE', 'RECLAMATION.id_note', '=', 'NOTE.id_note')
             ->join('MODULE', 'NOTE.id_module', '=', 'MODULE.id_module')
             ->join('SEMESTRE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
-            ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->where('RECLAMATION.statut', 'en_attente')
             ->where('FILIERE.id_departement', $chef->id_departement)
             ->count();
     }
 
-    /**
-     * Dashboard
-     */
     public function dashboard()
     {
         $chef = $this->getChef();
@@ -56,8 +47,7 @@ class ChefController extends Controller
 
         $totalModules = DB::table('MODULE')
             ->join('SEMESTRE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
-            ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->where('FILIERE.id_departement', $chef->id_departement)
             ->count();
 
@@ -67,16 +57,14 @@ class ChefController extends Controller
 
         $totalEtudiants = DB::table('inscrire')
             ->join('SEMESTRE', 'inscrire.id_semestre', '=', 'SEMESTRE.id_semestre')
-            ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->where('FILIERE.id_departement', $chef->id_departement)
             ->distinct('inscrire.id_etudiant')
             ->count('inscrire.id_etudiant');
 
         $recentModules = DB::table('MODULE')
             ->join('SEMESTRE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
-            ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->join('ENSEIGNANT', 'MODULE.id_enseignant', '=', 'ENSEIGNANT.id_enseignant')
             ->join('Utilisateur', 'ENSEIGNANT.id_user', '=', 'Utilisateur.id_user')
             ->where('FILIERE.id_departement', $chef->id_departement)
@@ -100,21 +88,12 @@ class ChefController extends Controller
         $pendingCount = $this->getPendingCount($chef);
 
         return view('chef.dashboard', compact(
-            'chef',
-            'departement',
-            'totalFilieres',
-            'totalModules',
-            'totalEnseignants',
-            'totalEtudiants',
-            'recentModules',
-            'filieres',
-            'pendingCount'
+            'chef', 'departement', 'totalFilieres', 'totalModules',
+            'totalEnseignants', 'totalEtudiants', 'recentModules',
+            'filieres', 'pendingCount'
         ));
     }
 
-    /**
-     * List all modules of the department
-     */
     public function modules()
     {
         $chef = $this->getChef();
@@ -122,7 +101,7 @@ class ChefController extends Controller
         $modules = DB::table('MODULE')
             ->join('SEMESTRE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
             ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->join('ENSEIGNANT', 'MODULE.id_enseignant', '=', 'ENSEIGNANT.id_enseignant')
             ->join('Utilisateur', 'ENSEIGNANT.id_user', '=', 'Utilisateur.id_user')
             ->where('FILIERE.id_departement', $chef->id_departement)
@@ -145,7 +124,7 @@ class ChefController extends Controller
 
         $semestres = DB::table('SEMESTRE')
             ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->where('FILIERE.id_departement', $chef->id_departement)
             ->select(
                 'SEMESTRE.id_semestre',
@@ -164,22 +143,15 @@ class ChefController extends Controller
         $pendingCount = $this->getPendingCount($chef);
 
         return view('chef.modules', compact(
-            'modules',
-            'semestres',
-            'enseignants',
-            'chef',
-            'pendingCount'
+            'modules', 'semestres', 'enseignants', 'chef', 'pendingCount'
         ));
     }
 
-    /**
-     * Store a new module
-     */
     public function storeModule(Request $request)
     {
         $request->validate([
             'code_module'   => ['required', 'string', 'max:20'],
-            'nom_module'    => ['required', 'string', 'max:50'],
+            'nom_module'    => ['required', 'string', 'max:255'],
             'id_semestre'   => ['required', 'integer'],
             'id_enseignant' => ['required', 'integer'],
         ]);
@@ -194,24 +166,20 @@ class ChefController extends Controller
         return back()->with('success', 'Module ajouté avec succès.');
     }
 
-    /**
-     * Update a module
-     */
     public function updateModule(Request $request, $id)
     {
         $chef = $this->getChef();
 
         $request->validate([
             'code_module'   => ['required', 'string', 'max:20'],
-            'nom_module'    => ['required', 'string', 'max:50'],
+            'nom_module'    => ['required', 'string', 'max:255'],
             'id_semestre'   => ['required', 'integer'],
             'id_enseignant' => ['required', 'integer'],
         ]);
 
         $module = DB::table('MODULE')
             ->join('SEMESTRE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
-            ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->where('MODULE.id_module', $id)
             ->where('FILIERE.id_departement', $chef->id_departement)
             ->first();
@@ -228,17 +196,13 @@ class ChefController extends Controller
         return back()->with('success', 'Module modifié avec succès.');
     }
 
-    /**
-     * Delete a module
-     */
     public function deleteModule($id)
     {
         $chef = $this->getChef();
 
         $module = DB::table('MODULE')
             ->join('SEMESTRE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
-            ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->where('MODULE.id_module', $id)
             ->where('FILIERE.id_departement', $chef->id_departement)
             ->first();
@@ -248,15 +212,11 @@ class ChefController extends Controller
         $notes = DB::table('NOTE')->where('id_module', $id)->pluck('id_note');
         DB::table('RECLAMATION')->whereIn('id_note', $notes)->delete();
         DB::table('NOTE')->where('id_module', $id)->delete();
-        DB::table('intervenir')->where('id_module', $id)->delete();
         DB::table('MODULE')->where('id_module', $id)->delete();
 
         return back()->with('success', 'Module supprimé avec succès.');
     }
 
-    /**
-     * List all filieres of the department
-     */
     public function filieres()
     {
         $chef = $this->getChef();
@@ -272,22 +232,16 @@ class ChefController extends Controller
         $pendingCount = $this->getPendingCount($chef);
 
         return view('chef.filieres', compact(
-            'filieres',
-            'departement',
-            'chef',
-            'pendingCount'
+            'filieres', 'departement', 'chef', 'pendingCount'
         ));
     }
 
-    /**
-     * Store a new filiere
-     */
     public function storeFiliere(Request $request)
     {
         $chef = $this->getChef();
 
         $request->validate([
-            'nom_filiere' => ['required', 'string', 'max:50', 'unique:FILIERE,nom_filiere'],
+            'nom_filiere' => ['required', 'string', 'max:255', 'unique:FILIERE,nom_filiere'],
             'description' => ['required', 'string'],
         ]);
 
@@ -300,15 +254,12 @@ class ChefController extends Controller
         return back()->with('success', 'Filière ajoutée avec succès.');
     }
 
-    /**
-     * Update a filiere
-     */
     public function updateFiliere(Request $request, $id)
     {
         $chef = $this->getChef();
 
         $request->validate([
-            'nom_filiere' => ['required', 'string', 'max:50'],
+            'nom_filiere' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
         ]);
 
@@ -323,9 +274,6 @@ class ChefController extends Controller
         return back()->with('success', 'Filière modifiée avec succès.');
     }
 
-    /**
-     * Delete a filiere
-     */
     public function deleteFiliere($id)
     {
         $chef = $this->getChef();
@@ -342,9 +290,6 @@ class ChefController extends Controller
         return back()->with('success', 'Filière supprimée avec succès.');
     }
 
-    /**
-     * List all students of the department
-     */
     public function etudiants()
     {
         $chef = $this->getChef();
@@ -354,7 +299,7 @@ class ChefController extends Controller
             ->join('inscrire', 'ETUDIANT.id_etudiant', '=', 'inscrire.id_etudiant')
             ->join('SEMESTRE', 'inscrire.id_semestre', '=', 'SEMESTRE.id_semestre')
             ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->where('FILIERE.id_departement', $chef->id_departement)
             ->select(
                 'ETUDIANT.id_etudiant',
@@ -380,15 +325,10 @@ class ChefController extends Controller
         $pendingCount = $this->getPendingCount($chef);
 
         return view('chef.etudiants', compact(
-            'etudiants',
-            'chef',
-            'pendingCount'
+            'etudiants', 'chef', 'pendingCount'
         ));
     }
 
-    /**
-     * View notes of a specific student
-     */
     public function etudiantNotes($id)
     {
         $chef = $this->getChef();
@@ -404,8 +344,7 @@ class ChefController extends Controller
         $notes = DB::table('NOTE')
             ->join('MODULE', 'NOTE.id_module', '=', 'MODULE.id_module')
             ->join('SEMESTRE', 'MODULE.id_semestre', '=', 'SEMESTRE.id_semestre')
-            ->join('ANNEE_ACADEMIQUE', 'SEMESTRE.id_annee', '=', 'ANNEE_ACADEMIQUE.id_annee')
-            ->join('FILIERE', 'ANNEE_ACADEMIQUE.id_filiere', '=', 'FILIERE.id_filiere')
+            ->join('FILIERE', 'SEMESTRE.id_filiere', '=', 'FILIERE.id_filiere')
             ->where('NOTE.id_etudiant', $id)
             ->where('FILIERE.id_departement', $chef->id_departement)
             ->select(
@@ -422,10 +361,7 @@ class ChefController extends Controller
         $pendingCount = $this->getPendingCount($chef);
 
         return view('chef.etudiant-notes', compact(
-            'etudiant',
-            'notes',
-            'chef',
-            'pendingCount'
+            'etudiant', 'notes', 'chef', 'pendingCount'
         ));
     }
 }
