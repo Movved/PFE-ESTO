@@ -45,10 +45,7 @@
             <i class="fi fi-rr-book-open-cover icon"></i>
             <span class="sb-item-label">Modules</span>
         </a>
-        <a href="{{ route('admin.semestres') }}" class="sb-item {{ request()->routeIs('admin.semestres*') ? 'active' : '' }}">
-            <i class="fi fi-rr-calendar icon"></i>
-            <span class="sb-item-label">Semestres</span>
-        </a>
+
 
         <div class="sb-divider"></div>
         <div class="sb-label">Académique</div>
