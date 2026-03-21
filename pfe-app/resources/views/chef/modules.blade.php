@@ -52,7 +52,7 @@
                         <div class="card-title">Tous les modules</div>
                         <div class="card-sub">{{ $modules->count() }} module(s) dans votre département</div>
                     </div>
-                    <button onclick="openAddModal()" class="btn btn-primary">
+                    <button onclick="openModuleAddModal()" class="btn btn-primary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                             <line x1="12" y1="5" x2="12" y2="19"/>
                             <line x1="5" y1="12" x2="19" y2="12"/>
@@ -88,15 +88,27 @@
                                         </span>
                                     </td>
                                     <td class="center">
-                                        <div class="action-group action-group--center">
-                                            <button onclick="openEditModal({{ $m->id_module }}, '{{ addslashes($m->code_module) }}', '{{ addslashes($m->nom_module) }}', {{ $m->id_semestre }}, {{ $m->id_enseignant }})" class="btn btn-secondary btn-sm">
-                                                Modifier
-                                            </button>
-                                            <form method="POST" action="{{ route('chef.modules.delete', $m->id_module) }}" onsubmit="return confirm('Supprimer ce module ?')">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                                            </form>
-                                        </div>
+<div class="filiere-actions">
+<button onclick="openModuleEditModal({{ $m->id_module }}, '{{ addslashes($m->code_module) }}', '{{ addslashes($m->nom_module) }}', {{ $m->id_semestre }}, {{ $m->id_enseignant }})" class="filiere-btn filiere-btn-edit">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+    Modifier
+</button>
+<form method="POST" action="{{ route('chef.modules.delete', $m->id_module) }}" onsubmit="return confirm('Supprimer ce module ?')">
+    @csrf @method('DELETE')
+    <button type="submit" class="filiere-btn filiere-btn-delete">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+        </svg>
+        Supprimer
+    </button>
+</form>
+</div>
                                     </td>
                                 </tr>
                             @empty
@@ -121,13 +133,13 @@
     </div>
 
     {{-- ADD MODAL --}}
-    <div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeAddModal()">
+    <div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeModuleAddModal()">
         <div class="modal">
             <div class="modal-header">
                 <div>
                     <div class="modal-title">Ajouter un module</div>
                 </div>
-                <button class="modal-close" onclick="closeAddModal()">&times;</button>
+                <button class="modal-close" onclick="closeModuleAddModal()">&times;</button>
             </div>
             <div class="modal-sub">Nouveau module dans votre département</div>
             <form method="POST" action="{{ route('chef.modules.store') }}">
@@ -161,21 +173,19 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Ajouter</button>
-                </div>
+                <button type="button" class="btn btn-secondary" onclick="closeModuleAddModal()">Annuler</button>                </div>
             </form>
         </div>
     </div>
 
     {{-- EDIT MODAL --}}
-    <div class="modal-overlay" id="edit-modal" onclick="if(event.target===this)closeEditModal()">
+    <div class="modal-overlay" id="edit-modal" onclick="if(event.target===this)closeModuleEditModal()">
         <div class="modal">
             <div class="modal-header">
                 <div>
                     <div class="modal-title">Modifier le module</div>
                 </div>
-                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+                <button class="modal-close" onclick="closeModuleEditModal()">&times;</button>
             </div>
             <div class="modal-sub" id="edit-modal-sub"></div>
             <form method="POST" id="edit-form">
@@ -207,31 +217,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Annuler</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModuleEditModal()">Annuler</button>
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        function openAddModal()  { document.getElementById('add-modal').classList.add('open'); }
-        function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
-
-        function openEditModal(id, code, nom, semestreId, enseignantId) {
-            document.getElementById('edit-form').action          = `/chef/modules/${id}`;
-            document.getElementById('edit-modal-sub').textContent = nom;
-            document.getElementById('edit-code').value           = code;
-            document.getElementById('edit-nom').value            = nom;
-            document.getElementById('edit-semestre').value       = semestreId;
-            document.getElementById('edit-enseignant').value     = enseignantId;
-            document.getElementById('edit-modal').classList.add('open');
-        }
-        function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); }
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') { closeAddModal(); closeEditModal(); }
-        });
-    </script>
 </body>
 </html>

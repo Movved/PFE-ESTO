@@ -82,7 +82,8 @@
                                                 </div>
                                                 <div>
                                                     <div class="etu-name">{{ $rec->prenom_etudiant ?? '' }}
-                                                        {{ $rec->nom_etudiant ?? '' }}</div>
+                                                        {{ $rec->nom_etudiant ?? '' }}
+                                                    </div>
                                                     <div class="cell-secondary">{{ $rec->cne_etudiant ?? '' }}</div>
                                                 </div>
                                             </div>
@@ -106,7 +107,7 @@
                                             {{ isset($rec->date_reclamation) ? \Carbon\Carbon::parse($rec->date_reclamation)->format('d/m/Y') : '' }}
                                         </td>
                                         <td class="center">
-                                            @if(isset($rec->traite) && $rec->traite)
+                                            @if(isset($rec->statut) && $rec->statut === 'traitee')
                                                 <span class="badge badge-resolved"><span class="badge-dot"></span>Traitée</span>
                                             @else
                                                 <span class="badge badge-pending"><span class="badge-dot"></span>En
@@ -148,38 +149,52 @@
     {{-- MODAL --}}
     <div class="modal-overlay" id="rec-modal" data-base-url="{{ url('enseignant/reclamations') }}"
         onclick="if(event.target===this)closeRecModal()">
-        <div class="modal">
-            <div class="modal-header">
-                <div>
-                    <div class="modal-title">Détail de la réclamation</div>
-                    <div class="modal-sub" id="modal-sub"></div>
+        <div class="rec-modal">
+            <div class="rec-modal-header">
+                <div class="rec-modal-header-left">
+                    <div class="rec-modal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="rec-modal-title">Réclamation</div>
+                        <div class="rec-modal-sub" id="modal-sub"></div>
+                    </div>
                 </div>
-                <button type="button" class="modal-close" onclick="closeRecModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-note-row">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                <button type="button" class="rec-modal-close" onclick="closeRecModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                    <span class="cell-secondary">Note actuelle :&nbsp;</span>
-                    <span id="modal-note" style="font-size:14px;font-weight:600;"></span>
-                </div>
-                <div class="form-label" style="margin-bottom:6px;">Message de l'étudiant</div>
-                <div id="modal-msg" class="modal-msg-box"></div>
-                <form method="POST" action="" id="rec-form" style="margin-top:16px;">
+                </button>
+            </div>
+            <div class="rec-modal-note-row">
+                <span class="rec-modal-note-label">Note actuelle</span>
+                <span class="rec-modal-note-value" id="modal-note">—</span>
+            </div>
+            <div class="rec-modal-body">
+                <div class="rec-modal-section-label">Message de l'étudiant</div>
+                <div class="rec-modal-msg" id="modal-msg"></div>
+                <form method="POST" action="" id="rec-form">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="id_reclamation" id="modal-rec-id">
-                    <div class="form-group">
-                        <label class="form-label">Réponse / Commentaire</label>
-                        <textarea name="reponse" rows="3" class="form-textarea"
-                            placeholder="Expliquez votre décision..."></textarea>
-                    </div>
+                    <div class="rec-modal-section-label" style="margin-top:20px;">Votre réponse</div>
+                    <textarea name="reponse" rows="3" class="rec-modal-textarea"
+                        placeholder="Expliquez votre décision..."></textarea>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeRecModal()">Fermer</button>
-                <button type="submit" form="rec-form" class="btn btn-primary">Marquer comme traitée</button>
+            <div class="rec-modal-footer">
+                <button type="button" class="rec-modal-btn-cancel" onclick="closeRecModal()">Fermer</button>
+                <button type="submit" form="rec-form" class="rec-modal-btn-submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Marquer comme traitée
+                </button>
             </div>
         </div>
     </div>

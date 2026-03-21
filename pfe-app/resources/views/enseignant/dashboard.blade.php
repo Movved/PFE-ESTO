@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <script>
         if (localStorage.getItem('theme') === 'dark' ||
@@ -11,15 +12,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Enseignant</title>
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/enseignant/enseignant.css', 'resources/js/enseignant/enseignant.js'])
-</head>
-<body>
-    @include('layouts.sidebar-enseignant')
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
     <div class="layout">
+
+        @include('layouts.sidebar-enseignant')
+
         <div class="main" id="main-content">
             @include('layouts.topbar', ['title' => 'Dashboard'])
 
             <main class="content">
+
                 @if(session('success'))
                     <div class="alert alert-success">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -39,6 +47,21 @@
                         {{ session('error') }}
                     </div>
                 @endif
+
+                {{-- BANNER --}}
+                <div class="dept-banner">
+                    <div>
+                        <div class="dept-banner-eyebrow">Enseignant</div>
+                        <div class="dept-banner-title">Bonjour, {{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
+                        <div class="dept-banner-sub">{{ $totalModules ?? 0 }} module(s) · {{ $totalEtudiants ?? 0 }} étudiant(s) suivi(s)</div>
+                    </div>
+                    <div class="dept-banner-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+                        </svg>
+                    </div>
+                </div>
 
                 {{-- STATS --}}
                 <div class="stats-grid">
@@ -238,7 +261,7 @@
                                             {{ isset($rec->date_reclamation) ? \Carbon\Carbon::parse($rec->date_reclamation)->format('d/m/Y') : '—' }}
                                         </td>
                                         <td class="center">
-                                            @if(isset($rec->traite) && $rec->traite)
+                                            @if(isset($rec->statut) && $rec->statut === 'traitee')
                                                 <span class="badge badge-resolved"><span class="badge-dot"></span>Traitée</span>
                                             @else
                                                 <span class="badge badge-pending"><span class="badge-dot"></span>En attente</span>
@@ -278,38 +301,52 @@
     </div>
 
     {{-- MODAL --}}
-    <div class="modal-overlay" id="rec-modal" data-base-url="{{ url('enseignant/reclamations') }}" onclick="if(event.target===this)closeRecModal()">
-        <div class="modal">
-            <div class="modal-header">
-                <div>
-                    <div class="modal-title">Détail de la réclamation</div>
+    <div class="modal-overlay" id="rec-modal" data-base-url="{{ url('enseignant/reclamations') }}"
+        onclick="if(event.target===this)closeRecModal()">
+        <div class="rec-modal">
+            <div class="rec-modal-header">
+                <div class="rec-modal-header-left">
+                    <div class="rec-modal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="rec-modal-title">Réclamation</div>
+                        <div class="rec-modal-sub" id="modal-sub"></div>
+                    </div>
                 </div>
-                <button type="button" class="modal-close" onclick="closeRecModal()">&times;</button>
-            </div>
-            <div class="modal-sub" id="modal-sub"></div>
-            <div class="modal-body">
-                <div class="modal-note-row">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                <button type="button" class="rec-modal-close" onclick="closeRecModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
-                    <span class="cell-secondary">Note actuelle :&nbsp;</span>
-                    <span id="modal-note" style="font-size:14px;font-weight:600;"></span>
-                </div>
-                <div class="form-label">Message de l'étudiant</div>
-                <div id="modal-msg" class="modal-msg-box"></div>
+                </button>
+            </div>
+            <div class="rec-modal-note-row">
+                <span class="rec-modal-note-label">Note actuelle</span>
+                <span class="rec-modal-note-value" id="modal-note">—</span>
+            </div>
+            <div class="rec-modal-body">
+                <div class="rec-modal-section-label">Message de l'étudiant</div>
+                <div class="rec-modal-msg" id="modal-msg"></div>
                 <form method="POST" action="" id="rec-form">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="id_reclamation" id="modal-rec-id">
-                    <div class="form-group">
-                        <label class="form-label">Réponse / Commentaire</label>
-                        <textarea name="reponse" rows="3" class="form-textarea" placeholder="Expliquez votre décision..."></textarea>
-                    </div>
+                    <div class="rec-modal-section-label" style="margin-top:20px;">Votre réponse</div>
+                    <textarea name="reponse" rows="3" class="rec-modal-textarea"
+                        placeholder="Expliquez votre décision..."></textarea>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeRecModal()">Fermer</button>
-                <button type="submit" form="rec-form" class="btn btn-primary">Marquer comme traitée</button>
+            <div class="rec-modal-footer">
+                <button type="button" class="rec-modal-btn-cancel" onclick="closeRecModal()">Fermer</button>
+                <button type="submit" form="rec-form" class="rec-modal-btn-submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Marquer comme traitée
+                </button>
             </div>
         </div>
     </div>

@@ -107,7 +107,7 @@
                                             {{ isset($rec->date_reclamation) ? \Carbon\Carbon::parse($rec->date_reclamation)->format('d/m/Y') : '' }}
                                         </td>
                                         <td class="center">
-                                            @if(isset($rec->traite) && $rec->traite)
+                                            @if(isset($rec->statut) && $rec->statut === 'traitee')
                                                 <span class="badge badge-resolved"><span class="badge-dot"></span>Traitée</span>
                                             @else
                                                 <span class="badge badge-pending"><span class="badge-dot"></span>En
@@ -147,8 +147,8 @@
     </div>
 
     {{-- MODAL --}}
-    <div class="modal-overlay" id="rec-modal" data-base-url="{{ url('admin/reclamations') }}""
-        onclick="if(event.target===this)closeRecModal()">
+    <div class="modal-overlay" id="rec-modal" data-base-url="{{ url('admin/reclamations') }}"
+        onclick=" if(event.target===this)closeRecModal()">
         <div class="rec-modal">
 
             {{-- Header --}}
