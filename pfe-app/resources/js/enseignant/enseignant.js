@@ -21,7 +21,7 @@
             document.getElementById('modal-sub').textContent = etudiant + ' — ' + module;
             document.getElementById('modal-msg').textContent = message || 'Aucun message';
             document.getElementById('modal-rec-id').value    = id;
-            document.getElementById('rec-form').action       = reclamationsBaseUrl + '/' + id + '/traiter';
+            document.getElementById('rec-form').action = modal.dataset.baseUrl + '/' + id + '/traiter';
 
             const el = document.getElementById('modal-note');
             el.classList.remove('grade-pass', 'grade-warn', 'grade-fail');
