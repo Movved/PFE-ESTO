@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/reclamations',         [AdminReclamation::class, 'index'])->name('reclamations');
         Route::get('/reclamations/{id}',    [AdminReclamation::class, 'show'])->name('reclamations.show');
         Route::delete('/reclamations/{id}', [AdminReclamation::class, 'destroy'])->name('reclamations.destroy');
+        Route::patch('/reclamations/{id}', [AdminReclamation::class, 'update'])->name('reclamations.update');
 
         // Logs
         Route::get('/logs', [AdminLog::class, 'index'])->name('logs');
