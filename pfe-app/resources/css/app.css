@@ -549,6 +549,7 @@ tbody td {
 
 /* - BADGES - */
 .badge {
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -597,6 +598,11 @@ html.dark .badge-pending {
 .badge-none {
     color: var(--text-3);
     font-size: 13px;
+}
+
+table th:nth-child(6),
+table td:nth-child(6) {
+    min-width: 110px;
 }
 
 /* - FILIERES - */
@@ -774,11 +780,6 @@ html.dark .badge-pending {
     stroke: currentColor;
     stroke-width: 1.5;
     fill: none;
-}
-
-.btn-sm {
-    padding: 5px 11px;
-    font-size: 12px;
 }
 
 .btn-primary {
@@ -2862,4 +2863,69 @@ input[type="checkbox"]:checked::after {
 
 input[type="checkbox"]:hover {
     border-color: var(--gold);
+}
+
+.module-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-2);
+    text-decoration: none;
+    margin-bottom: 16px;
+    transition: color 0.15s;
+}
+
+.module-back:hover {
+    color: var(--text-1);
+}
+
+.module-back svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* ── Shared action buttons (filiere, module, etc.) ── */
+.filiere-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.filiere-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 14px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    box-sizing: border-box;
+    border: 1px solid var(--border-2);
+    background: var(--surface-2);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.filiere-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+.filiere-btn-edit { color: var(--text-2); }
+.filiere-btn-edit:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.filiere-btn-delete { color: var(--text-3); }
+.filiere-btn-delete:hover {
+    background: rgba(180, 90, 90, 0.12);
+    border-color: rgba(180, 90, 90, 0.5);
+    color: rgb(180, 90, 90);
 }
