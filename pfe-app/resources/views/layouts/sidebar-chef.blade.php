@@ -65,7 +65,7 @@
             <i class="fi fi-rr-bell icon"></i>
             <span class="sb-item-label">Réclamations</span>
             @if(isset($pendingCount) && $pendingCount > 0)
-                <span class="sb-badge">{{ $pendingCount }}</span>
+                {{-- <span class="sb-badge">{{ $pendingCount }}</span> --}}
             @endif
         </a>
 

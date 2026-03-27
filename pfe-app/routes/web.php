@@ -70,10 +70,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/notes/{id}',      [AdminNote::class, 'update'])->name('notes.update');
 
         // Reclamations
-        Route::get('/reclamations',              [AdminReclamation::class, 'index'])->name('reclamations');
-    Route::get('/reclamations/{id}',         [AdminReclamation::class, 'show'])->name('reclamations.show');
-    Route::put('/reclamations/{id}/statut',  [AdminReclamation::class, 'updateStatut'])->name('reclamations.statut');  
-    Route::delete('/reclamations/{id}',      [AdminReclamation::class, 'destroy'])->name('reclamations.destroy');
+        Route::get('/reclamations',         [AdminReclamation::class, 'index'])->name('reclamations');
+        Route::get('/reclamations/{id}',    [AdminReclamation::class, 'show'])->name('reclamations.show');
+        Route::delete('/reclamations/{id}', [AdminReclamation::class, 'destroy'])->name('reclamations.destroy');
+        Route::patch('/reclamations/{id}', [AdminReclamation::class, 'update'])->name('reclamations.update');
 
         // Logs
         Route::get('/logs', [AdminLog::class, 'index'])->name('logs');

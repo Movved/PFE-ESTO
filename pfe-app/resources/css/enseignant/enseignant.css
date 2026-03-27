@@ -399,28 +399,16 @@ html.dark .module-card-icon {
 }
 
 /* ─── MODULE DETAIL PAGE ─────────────────────────── */
-.module-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-3);
-    text-decoration: none;
-    margin-bottom: 20px;
-    transition: color 0.15s;
+
+.content>.card {
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.module-back:hover { color: var(--text-1); }
-
-.module-back svg {
-    width: 15px;
-    height: 15px;
-    stroke: currentColor;
-    stroke-width: 1.5;
-    fill: none;
+.content>.card {
+    margin-left: auto;
+    margin-right: auto;
 }
-
 .module-header {
     display: flex;
     align-items: flex-start;

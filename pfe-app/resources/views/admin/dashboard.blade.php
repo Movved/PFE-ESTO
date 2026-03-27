@@ -100,13 +100,21 @@
                     <div class="card-body">
                         <div class="rep-list">
                             @forelse($filiereStats as $f)
-                                <div class="rep-row">
-                                    <div class="rep-label"><span>{{ Str::limit($f->nom_filiere, 18) }}</span><small>{{ $f->nb_etudiants }}</small></div>
-                                    <div class="rep-bar-wrap"><div class="rep-bar rep-bar-pass" style="width:{{ $totalEtudiants > 0 ? round(($f->nb_etudiants/$totalEtudiants)*100) : 0 }}%"></div></div>
-                                    <span class="rep-count" style="color:var(--text-3)">{{ $totalEtudiants > 0 ? round(($f->nb_etudiants/$totalEtudiants)*100) : 0 }}%</span>
+                            @php $pct = $totalEtudiants > 0 ? round(($f->nb_etudiants / $totalEtudiants) * 100) : 0; @endphp
+                            <div class="rep-row">
+                                <div class="rep-row-top">
+                                    <span class="rep-label">
+                                        {{ $f->nom_filiere }}
+                                        <small>{{ $f->nb_etudiants }} étudiant(s)</small>
+                                    </span>
+                                    <span class="rep-count">{{ $pct }}%</span>
                                 </div>
+                                <div class="rep-bar-wrap">
+                                    <div class="rep-bar rep-bar-pass" style="width:{{ $pct }}%"></div>
+                                </div>
+                            </div>
                             @empty
-                                <div class="empty-state">Aucune filière.</div>
+                            <div class="empty-state">Aucune filière.</div>
                             @endforelse
                         </div>
                     </div>

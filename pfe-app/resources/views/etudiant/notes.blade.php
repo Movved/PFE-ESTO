@@ -62,7 +62,8 @@
                                 <th>Code</th>
                                 <th class="center">Note</th>
                                 <th class="center">Rattrapage</th>
-                                <th class="center">Statut</th>
+                                <th class="center">Réclamation</th>
+                                <th class="center">Réponse</th>
                                 <th class="center">Action</th>
                             </tr>
                         </thead>
@@ -90,18 +91,32 @@
                                         @endif
                                     </td>
                                     <td class="center">
-                                        @if($row->has_reclamation)
-                                            <span class="badge badge-pending">
-                                                <span class="badge-dot"></span>
-                                                En attente
-                                            </span>
+                                    @if((bool) $row->has_reclamation)
+                                            @if(isset($row->reclamation_statut) && $row->reclamation_statut === 'traitee')
+                                                <span class="badge badge-resolved"><span class="badge-dot"></span>Traitée</span>
+                                            @else
+                                                <span class="badge badge-pending"><span class="badge-dot"></span>En attente</span>
+                                            @endif
                                         @else
                                             <span class="badge-none">—</span>
                                         @endif
                                     </td>
                                     <td class="center">
-                                        @if($row->id_note && !$row->has_reclamation && $row->note !== null)
-                                            <button class="btn btn-signal signaler-btn"
+                                    @if((bool) $row->has_reclamation && !empty($row->reclamation_reponse))                                            <button type="button" class="filiere-btn filiere-btn-edit voir-reponse-btn"
+                                                data-reponse="{{ $row->reclamation_reponse }}"
+                                                data-module="{{ $row->nom_module }}">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                    <circle cx="12" cy="12" r="3"/>
+                                                </svg>
+                                                Voir
+                                            </button>
+                                        @else
+                                            <span class="badge-none">—</span>
+                                        @endif
+                                    </td>
+                                    <td class="center">
+                                    @if($row->id_note && !((bool) $row->has_reclamation) && $row->note !== null)                                            <button class="btn btn-signal signaler-btn"
                                                 data-note-id="{{ $row->id_note }}"
                                                 data-note-name="{{ $row->nom_module }}">
                                                 Signaler
@@ -113,7 +128,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6">
+                                    <td colspan="7">
                                         <div class="empty-state">
                                             <svg viewBox="0 0 24 24">
                                                 <path d="M9 11l3 3L22 4"/>
@@ -156,43 +171,37 @@
         </div>
     </div>
 
-    <script>
-        (function () {
-            var overlay = document.getElementById('modal');
+    {{-- REPONSE MODAL --}}
+    <div class="modal-overlay" id="reponse-modal" onclick="if(event.target===this)closeReponseModal()">
+        <div class="rec-modal">
+            <div class="rec-modal-header">
+                <div class="rec-modal-header-left">
+                    <div class="rec-modal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="rec-modal-title">Réponse</div>
+                        <div class="rec-modal-sub" id="reponse-modal-sub"></div>
+                    </div>
+                </div>
+                <button type="button" class="rec-modal-close" onclick="closeReponseModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="rec-modal-body">
+                <div class="rec-modal-section-label">Réponse de l'enseignant</div>
+                <div class="rec-modal-msg" id="reponse-modal-text"></div>
+            </div>
+            <div class="rec-modal-footer">
+                <button type="button" class="rec-modal-btn-cancel" onclick="closeReponseModal()">Fermer</button>
+            </div>
+        </div>
+    </div>
 
-            function openModal(id, nom) {
-                document.getElementById('modal-id-note').value = id;
-                document.getElementById('modal-label').textContent = nom;
-                overlay.classList.add('open');
-            }
-
-            function closeModal() {
-                overlay.classList.remove('open');
-            }
-
-            // Open — delegated, catches all .signaler-btn clicks
-            document.addEventListener('click', function (e) {
-                var btn = e.target.closest('.signaler-btn');
-                if (btn) {
-                    openModal(btn.dataset.noteId, btn.dataset.noteName);
-                    return;
-                }
-                // Close via X or Cancel buttons
-                if (e.target.closest('#modal-close-btn') || e.target.closest('#modal-cancel-btn')) {
-                    closeModal();
-                    return;
-                }
-                // Close by clicking the overlay backdrop
-                if (e.target === overlay) {
-                    closeModal();
-                }
-            });
-
-            // Close on Escape
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') closeModal();
-            });
-        })();
-    </script>
 </body>
 </html>

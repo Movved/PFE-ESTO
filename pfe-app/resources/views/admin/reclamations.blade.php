@@ -37,80 +37,111 @@
                             <span style="color:var(--gold);">{{ $reclamations->where('statut','en_attente')->count() }} en attente</span>
                         </div>
                     </div>
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Étudiant</th>
+                                    <th>Module</th>
+                                    <th class="center">Note</th>
+                                    <th>Message</th>
+                                    <th class="center">Date</th>
+                                    <th class="center">Statut</th>
+                                    <th class="center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($reclamations ?? [] as $rec)
+                                    <tr>
+                                        <td>
+                                            <div class="etu-cell">
+                                                <div class="user-avatar-small">
+                                                    {{ strtoupper(substr($rec->prenom_etudiant ?? 'E', 0, 1)) }}{{ strtoupper(substr($rec->nom_etudiant ?? 'T', 0, 1)) }}
+                                                </div>
+                                                <div>
+                                                    <div class="etu-name">{{ $rec->prenom_etudiant ?? '' }}
+                                                        {{ $rec->nom_etudiant ?? '' }}
+                                                    </div>
+                                                    <div class="cell-secondary">{{ $rec->cne_etudiant ?? '' }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="module-name">{{ $rec->nom_module ?? '' }}</span>
+                                            <span class="code-badge">{{ $rec->code_module ?? '' }}</span>
+                                        </td>
+                                        <td class="center">
+                                            @if(isset($rec->note) && $rec->note !== null)
+                                                <span
+                                                    class="grade-value {{ $rec->note >= 12 ? 'grade-pass' : ($rec->note >= 10 ? 'grade-warn' : 'grade-fail') }}">
+                                                    {{ number_format($rec->note, 2) }}
+                                                </span>
+                                            @else
+                                                <span class="grade-empty">—</span>
+                                            @endif
+                                        </td>
+                                        <td class="rec-msg">{{ $rec->message ?? '' }}</td>
+                                        <td class="center cell-secondary">
+                                            {{ isset($rec->date_reclamation) ? \Carbon\Carbon::parse($rec->date_reclamation)->format('d/m/Y') : '' }}
+                                        </td>
+                                        <td class="center">
+                                            @if(isset($rec->statut) && $rec->statut === 'traitee')
+                                                <span class="badge badge-resolved"><span class="badge-dot"></span>Traitée</span>
+                                            @else
+                                                <span class="badge badge-pending"><span class="badge-dot"></span>En
+                                                    attente</span>
+                                            @endif
+                                        </td>
+                                        <td class="center">
+                                            <button type="button" class="btn btn-secondary btn-sm btn-voir"
+                                                data-id="{{ $rec->id_reclamation }}"
+                                                data-etudiant="{{ ($rec->prenom_etudiant ?? '') . ' ' . ($rec->nom_etudiant ?? '') }}"
+                                                data-module="{{ $rec->nom_module ?? '' }}"
+                                                data-note="{{ $rec->note ?? '' }}" data-message="{{ $rec->message ?? '' }}">
+                                                Voir
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="empty-state">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="1.5">
+                                                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                                    <path d="M13.73 21a2 2 0 01-3.46 0" />
+                                                </svg>
+                                                Aucune réclamation.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Étudiant</th>
-                                <th>Module</th>
-                                <th>Note</th>
-                                <th>Message</th>
-                                <th>Date</th>
-                                <th class="center">Statut</th>
-                                <th class="center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($reclamations as $r)
-                            <tr>
-                                <td>
-                                    <div class="etu-cell">
-                                        <div class="user-avatar-small">{{ strtoupper(substr($r->prenom,0,1)) }}{{ strtoupper(substr($r->nom,0,1)) }}</div>
-                                        <div>
-                                            <div class="etu-name">{{ $r->prenom }} {{ $r->nom }}</div>
-                                            <div class="cell-secondary">{{ $r->cne }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="etu-name" style="font-size:13px;">{{ $r->nom_module }}</div>
-                                    <div class="cell-secondary">{{ $r->code_module }}</div>
-                                </td>
-                                <td>
-                                    <span style="font-weight:600;color:{{ ($r->note ?? 0) >= 10 ? 'var(--green)' : 'var(--red)' }};">
-                                        {{ $r->note !== null ? number_format($r->note,2) : '—' }}
-                                    </span>
-                                    @if($r->rattrapage !== null)
-                                        <div class="cell-secondary">Ratt: {{ number_format($r->rattrapage,2) }}</div>
-                                    @endif
-                                </td>
-                                <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" class="cell-secondary">
-                                    {{ Str::limit($r->message, 60) }}
-                                </td>
-                                <td class="cell-secondary" style="white-space:nowrap;">
-                                    {{ $r->date_reclamation ? \Carbon\Carbon::parse($r->date_reclamation)->format('d/m/Y') : '—' }}
-                                </td>
-                                <td class="center">
-    @php
-        $sc = match($r->statut) {
-            'traitee' => 'badge-open',
-            'rejetee' => 'badge-closed',
-            default   => 'badge-pending',
-        };
-        $sl = match($r->statut) {
-            'traitee' => 'Traitée',
-            'rejetee' => 'Rejetée',
-            default   => 'En attente',
-        };
-    @endphp
-    <span class="badge {{ $sc }}"><span class="badge-dot"></span>{{ $sl }}</span>
-    </td>
-                                <td class="center">
-                                    <div class="action-group action-group--center">
-                                        <a href="{{ route('admin.reclamations.show', $r->id_reclamation) }}" class="btn btn-secondary btn-sm">Détail</a>
-                                        <form method="POST" action="{{ route('admin.reclamations.destroy', $r->id_reclamation) }}" onsubmit="return confirm('Supprimer cette réclamation ?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr><td colspan="7"><div class="empty-state">Aucune réclamation.</div></td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            </main>
+        </div>
+    </div>
+
+    {{-- MODAL --}}
+    <div class="modal-overlay" id="rec-modal" data-base-url="{{ url('admin/reclamations') }}"
+        onclick=" if(event.target===this)closeRecModal()">
+        <div class="rec-modal">
+
+            {{-- Header --}}
+            <div class="rec-modal-header">
+                <div class="rec-modal-header-left">
+                    <div class="rec-modal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="rec-modal-title">Réclamation</div>
+                        <div class="rec-modal-sub" id="modal-sub"></div>
+                    </div>
                 </div>
             </div>
         </main>

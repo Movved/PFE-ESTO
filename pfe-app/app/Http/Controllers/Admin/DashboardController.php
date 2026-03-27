@@ -21,7 +21,7 @@ class DashboardController extends Controller
         $totalModules = DB::table('MODULE')->count();
         $totalFilieres = DB::table('FILIERE')->count();
 
-        $totalReclamations = DB::table('RECLAMATION')->count();
+        $totalReclamations = DB::table('RECLAMATION')->where('statut', 'en_attente')->count();
         // $pendingReclamations = DB::table('RECLAMATION')->whereNull('date_reclamation')->count();
         $pendingReclamations = DB::table('RECLAMATION')->where('statut', 'en_attente')->count();
 
@@ -38,6 +38,7 @@ class DashboardController extends Controller
             ->join('ETUDIANT', 'ETUDIANT.id_etudiant', '=', 'NOTE.id_etudiant')
             ->join('Utilisateur', 'Utilisateur.id_user', '=', 'ETUDIANT.id_user')
             ->join('MODULE', 'MODULE.id_module', '=', 'NOTE.id_module')
+            ->where('RECLAMATION.statut', 'en_attente')
             ->select(
                 'RECLAMATION.id_reclamation',
                 'RECLAMATION.message',

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <script>
         if (localStorage.getItem('theme') === 'dark' ||
@@ -50,7 +51,7 @@
                         <div class="card-title">Filières du département</div>
                         <div class="card-sub">{{ $filieres->count() }} filière(s)</div>
                     </div>
-                    <button onclick="openAddModal()" class="btn btn-primary">
+                    <button onclick="openFiliereAddModal()" class="btn btn-primary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round">
                             <line x1="12" y1="5" x2="12" y2="19" />
@@ -66,16 +67,30 @@
                             <div class="filiere-name">{{ $f->nom_filiere }}</div>
                             <div class="filiere-desc">{{ $f->description }}</div>
                         </div>
-                        <div class="action-group">
+                        <div class="filiere-actions">
                             <button
-                                onclick="openEditModal({{ $f->id_filiere }}, '{{ addslashes($f->nom_filiere) }}', '{{ addslashes($f->description) }}')"
-                                class="btn btn-secondary btn-sm">
+                                onclick="openFiliereEditModal({{ $f->id_filiere }}, '{{ addslashes($f->nom_filiere) }}', '{{ addslashes($f->description) }}')"
+                                class="filiere-btn filiere-btn-edit">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
                                 Modifier
                             </button>
                             <form method="POST" action="{{ route('chef.filieres.delete', $f->id_filiere) }}"
                                 onsubmit="return confirm('Supprimer cette filière ?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                <button type="submit" class="filiere-btn filiere-btn-delete">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6" />
+                                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                                        <path d="M10 11v6M14 11v6" />
+                                        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                                    </svg>
+                                    Supprimer
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -88,13 +103,13 @@
     </div>
 
     {{-- ADD MODAL --}}
-    <div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeAddModal()">
+    <div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeFiliereAddModal()">
         <div class="modal">
             <div class="modal-header">
                 <div>
                     <div class="modal-title">Ajouter une filière</div>
                 </div>
-                <button class="modal-close" onclick="closeAddModal()">&times;</button>
+                <button class="modal-close" onclick="closeFiliereAddModal()">&times;</button>
             </div>
             <div class="modal-sub">Nouvelle filière dans votre département</div>
             <form method="POST" action="{{ route('chef.filieres.store') }}">
@@ -111,7 +126,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Annuler</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeFiliereAddModal()">Annuler</button>
                     <button type="submit" class="btn btn-primary">Ajouter</button>
                 </div>
             </form>
@@ -119,13 +134,13 @@
     </div>
 
     {{-- EDIT MODAL --}}
-    <div class="modal-overlay" id="edit-modal" onclick="if(event.target===this)closeEditModal()">
+    <div class="modal-overlay" id="edit-modal" onclick="if(event.target===this)closeFiliereEditModal()">
         <div class="modal">
             <div class="modal-header">
                 <div>
                     <div class="modal-title">Modifier la filière</div>
                 </div>
-                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+                <button class="modal-close" onclick="closeFiliereEditModal()">&times;</button>
             </div>
             <div class="modal-sub" id="edit-sub"></div>
             <form method="POST" id="edit-form">
@@ -141,30 +156,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Annuler</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeFiliereEditModal()">Annuler</button>
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <script>
-        function openAddModal() { document.getElementById('add-modal').classList.add('open'); }
-        function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
-
-        function openEditModal(id, nom, desc) {
-            document.getElementById('edit-form').action = `/chef/filieres/${id}`;
-            document.getElementById('edit-sub').textContent = nom;
-            document.getElementById('edit-nom').value = nom;
-            document.getElementById('edit-desc').value = desc;
-            document.getElementById('edit-modal').classList.add('open');
-        }
-        function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); }
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') { closeAddModal(); closeEditModal(); }
-        });
-    </script>
 </body>
 
 </html>

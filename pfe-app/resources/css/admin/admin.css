@@ -552,29 +552,66 @@ select.admin-search-input {
     margin-top: 1px;
 }
 
-/* Module back link */
-.module-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: var(--text-2);
-    text-decoration: none;
-    margin-bottom: 16px;
-    transition: color 0.15s;
-}
-
-.module-back:hover {
-    color: var(--text-1);
-}
-
-.module-back svg {
-    width: 14px;
-    height: 14px;
-}
-
 .content>.card {
     margin-left: auto;
     margin-right: auto;
 }
 
+
+.two-col {
+    grid-template-columns: 1.2fr 1fr;
+}
+
+.rep-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.rep-row-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rep-label {
+    font-size: 13px;
+    color: var(--text-2);
+}
+
+.rep-label small {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-left: 8px;
+}
+
+.rep-bar-wrap {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.rep-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}
+
+.rep-bar {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+.rep-bar-pass { background: var(--gold); }
+.rep-bar-warn { background: var(--gold); opacity: 0.6; }
+.rep-bar-fail { background: var(--red); }
+
+.rep-count {
+    font-size: 12px;
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+}
